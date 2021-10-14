@@ -1,10 +1,10 @@
 class Point:
   def __init__(self, x, y, z):
-    x_is_number = isinstance(x, int) or isinstance(x, float)
-    y_is_number = isinstance(y, int) or isinstance(y, float)
-    z_is_number = isinstance(z, int) or isinstance(z, float)
+    is_x_number = isinstance(x, int) or isinstance(x, float)
+    is_y_number = isinstance(y, int) or isinstance(y, float)
+    is_z_number = isinstance(z, int) or isinstance(z, float)
 
-    if not x_is_number or not y_is_number or not z_is_number:
+    if not is_x_number or not is_y_number or not is_z_number:
       raise ValueError('All point coordinates (x, y, z) must be a number.')
       
     self.__x, self.__y, self.__z = x, y, z
@@ -16,11 +16,11 @@ class Point:
     if not isinstance(other, Point):
       return NotImplemented
     
-    xEqual = self.__x == other.__x
-    yEqual = self.__y == other.__y
-    zEqual = self.__z == other.__z
+    is_x_equal = self.__x == other.__x
+    is_y_equal = self.__y == other.__y
+    is_z_equal = self.__z == other.__z
 
-    return xEqual and yEqual and zEqual
+    return is_x_equal and is_y_equal and is_z_equal
   
   def get_coordinates(self):
     return [self.__x, self.__y, self.__z]
