@@ -1,3 +1,5 @@
+from utils import convert_dict_values_to_numeric
+
 class Point:
   def __init__(self, x, y, z):
     is_x_number = isinstance(x, int) or isinstance(x, float)
@@ -24,3 +26,7 @@ class Point:
   
   def get_coordinates(self):
     return [self.__x, self.__y, self.__z]
+
+  def create_from_xml_attrib_dict(dict):
+    dict = convert_dict_values_to_numeric(dict, 'float')
+    return Point(dict['x'], dict['y'], dict['z'])
