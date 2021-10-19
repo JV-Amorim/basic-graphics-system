@@ -1,6 +1,6 @@
 from utils import convert_dict_values_to_numeric
 
-class Point:
+class Point3D:
   def __init__(self, x, y, z):
     is_x_number = isinstance(x, int) or isinstance(x, float)
     is_y_number = isinstance(y, int) or isinstance(y, float)
@@ -15,7 +15,7 @@ class Point:
     return f'({self.x}, {self.y}, {self.z})'
 
   def __eq__(self, other):
-    if not isinstance(other, Point):
+    if not isinstance(other, Point3D):
       return NotImplemented
     
     is_x_equal = self.x == other.x
@@ -26,4 +26,4 @@ class Point:
 
   def create_from_xml_attrib_dict(dict):
     dict = convert_dict_values_to_numeric(dict, 'float')
-    return Point(dict['x'], dict['y'], dict['z'])
+    return Point3D(dict['x'], dict['y'], dict['z'])

@@ -1,9 +1,6 @@
 class Viewport:
-  def __init__(self, min_x, min_y, max_x, max_y):
-    self.min_x, self.min_y = min_x, min_y
-    self.max_x, self.max_y = max_x, max_y
+  def __init__(self, min_point_2d, max_point_2d):
+    self.min_point, self.max_point = min_point_2d, max_point_2d
 
   def __repr__(self):
-    min_point = f'Min Point = ({self.min_x}, {self.min_y})'
-    max_point = f'Max Point = ({self.max_x}, {self.max_y})'
-    return f'{min_point} | {max_point}'
+    return f'Min Point = {self.min_point} | Max Point = {self.max_point}'
