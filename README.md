@@ -1,4 +1,4 @@
-# Window To Viewport Transformer
+# Window To Viewport Mapper
 
 [PT-BR Version](./README_pt_BR.md)
 
