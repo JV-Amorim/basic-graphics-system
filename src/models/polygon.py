@@ -5,7 +5,7 @@ class Polygon:
     self.__points = points
 
   def __repr__(self):
-    return 'Points = ' + str(self.__points)
+    return f'Points = {str(self.__points)}'
 
   def get_points(self):
     return self.__points
