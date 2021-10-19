@@ -6,7 +6,7 @@
 
 Este programa em Python é uma solução para o que é solicitado no [Trabalho Prático 1](./docs/TP1.pdf) do módulo de Computação Gráfica do curso de Ciência da Computação do IFNMG.
 
-O programa lê um arquivo XML contendo dados do viewport e dos objetos a serem desenhados, e realzia um transformação de coordenadas para cada objeto, mapeando as coordenadas de janela originais do objeto para coordenadas de viewport.
+O programa lê um arquivo XML contendo dados do viewport e dos objetos a serem desenhados, e realiza um transformação de coordenadas para cada objeto, mapeando as coordenadas de janela originais do objeto para coordenadas de viewport.
 
 ### Transformação Window-Viewport
 
@@ -23,8 +23,12 @@ Para entender melhor to que se trata a transformação window-viewport, leia a s
 - Python 3.10 ou versão posterior instalado;
 - Algum terminal com acesso ao Python.
 
-### Commands
+### Comandos
 
 Execute `py src/main.py` ou `python src/main.py` no terminal.
 
 O arquivo de saída contendo as coordenadas de viewport de cada objeto pode ser encontrado em `output/viewport-coordinates.xml`.
+
+## Arquivo XML (Entrada)
+
+O arquivo de entrada já possui alguns dados definidos. Novos dados podem ser adicionados se desejado. O único requisito é que os elementos `<viewport>` e `<window>` devem manter o mesmo formato, podendo ter apenas os valores de seus atributos alterados. Além disso, esses dois elementos devem ficar no início da tag root `<dados>` do XML, na mesma ordem original.
