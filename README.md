@@ -27,7 +27,7 @@ To better understanding of window-to-viewport transformation, check the followin
 
 Run `py src/main.py` or `python src/main.py` in the terminal.
 
-The output file containing the viewport-coordinate of each object can be found in `output/viewport-coordinates.xml`.
+The output file containing the viewport-coordinate of each object can be found in `data/output/viewport-coordinates.xml`.
 
 ## XML File (Input)
 

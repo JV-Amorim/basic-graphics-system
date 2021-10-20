@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from utils import create_directory_if_not_exists, indent_xml
 
-OUTPUT_DIRECTORY = 'output/'
+OUTPUT_DIRECTORY = 'data/output/'
 OUTPUT_FILE = 'viewport-coordinates.xml'
 
 def write_output_file(output_data):

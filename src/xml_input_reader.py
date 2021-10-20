@@ -13,7 +13,7 @@ POLYGON_TAG = 'poligono'
 
 class XmlInputReader:
   def __init__(self):
-    path = os.path.join(os.path.dirname(__file__), '..', 'data', 'input.xml')
+    path = os.path.join(os.path.dirname(__file__), '..', 'data', 'input', 'input.xml')
     self.xml_root = ET.parse(path).getroot()
 
   def get_all_input_data(self):
