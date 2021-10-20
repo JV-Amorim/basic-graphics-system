@@ -1,5 +1,6 @@
 from mapper import Mapper
 from xml_input_reader import XmlInputReader
+from xml_output_writer import write_output_file
 
 input_data = XmlInputReader().get_all_input_data()
 
@@ -23,7 +24,6 @@ for w_polygon in input_data['polygons']:
   v_polygon = mapper.window_to_viewport_polygon(w_polygon)
   output_data['polygons'].append(v_polygon)
 
-print(output_data)
+write_output_file(output_data)
 
-# TODO - Generate output file.
 # TODO - Show objects in GUI with QT.
