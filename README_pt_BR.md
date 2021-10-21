@@ -21,7 +21,8 @@ Para entender melhor to que se trata a transformação window-viewport, leia a s
 ### Pré-requisitos
 
 - Python 3.10 ou versão posterior instalado;
-- Algum terminal com acesso ao Python.
+- Algum terminal com acesso ao Python;
+- PySide6 instalado. Você pode instalá-lo executando `pip install pyside6==6.2.0` no terminal.
 
 ### Comandos
 

@@ -1,6 +1,7 @@
-from mapper import Mapper
 from xml_input_reader import XmlInputReader
+from mapper import Mapper
 from xml_output_writer import write_output_file
+from objects_renderer import render_objects
 
 input_data = XmlInputReader().get_all_input_data()
 
@@ -25,5 +26,4 @@ for w_polygon in input_data['polygons']:
   output_data['polygons'].append(v_polygon)
 
 write_output_file(output_data)
-
-# TODO - Show objects in GUI with QT.
+render_objects(output_data, input_data['viewport'])
