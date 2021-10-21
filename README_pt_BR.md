@@ -8,6 +8,12 @@ Este programa em Python é uma solução para o que é solicitado no [Trabalho P
 
 O programa lê um arquivo XML contendo dados do viewport e dos objetos a serem desenhados, e realiza um transformação de coordenadas para cada objeto, mapeando as coordenadas de janela originais do objeto para coordenadas de viewport.
 
+**Funcionalidade extra implementada**: renderização de cada objeto após o mapeamento das coordenadas.
+
+<kbd>
+  <img src="./docs/objects-rendered.jpg" alt="Objetos Renderizados" style="width: 500px">
+</kbd>
+
 ### Transformação Window-Viewport
 
 Para entender melhor to que se trata a transformação window-viewport, leia a seguinte explicação:
@@ -29,6 +35,8 @@ Para entender melhor to que se trata a transformação window-viewport, leia a s
 Execute `py src/main.py` ou `python src/main.py` no terminal.
 
 O arquivo de saída contendo as coordenadas de viewport de cada objeto pode ser encontrado em `data/output/viewport-coordinates.xml`.
+
+Uma janela com os objetos renderizados será aberta.
 
 ## Arquivo XML (Entrada)
 

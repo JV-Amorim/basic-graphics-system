@@ -8,6 +8,12 @@ This Python program is a solution for what is requested in the [First Practical 
 
 The program reads a XML file containing data of the viewport and objects to be drawn, and performs a coordinate transformation for each object, mapping the object's original window-coordinate to a viewport-coordinate.
 
+**Extra feature implemented**: rendering of each object after mapping the coordinates.
+
+<kbd>
+  <img src="./docs/objects-rendered.jpg" alt="Objects Rendered" style="width: 500px">
+</kbd>
+
 ### Window To Viewport Transformation
 
 To better understanding of window-to-viewport transformation, check the following explanation:
@@ -29,6 +35,8 @@ To better understanding of window-to-viewport transformation, check the followin
 Run `py src/main.py` or `python src/main.py` in the terminal.
 
 The output file containing the viewport-coordinate of each object can be found in `data/output/viewport-coordinates.xml`.
+
+A window with the rendered objects will open.
 
 ## XML File (Input)
 
