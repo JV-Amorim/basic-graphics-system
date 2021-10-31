@@ -1,7 +1,9 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
+
 # Set as False to not draw the coordinates of each point.
 # Defina como False para não desenhar as coordenadas de cada ponto.
+# TODO - Create button in GUI to set this option.
 DRAW_COORDINATES = True
 
 
@@ -21,13 +23,11 @@ class ObjectsRenderer(QtWidgets.QWidget):
     self.setWindowProperties()
     self.setBackgroundColor()
 
-
   def setWindowProperties(self):
     width = self.viewportData.min_point.x + self.viewportData.max_point.x
     height = self.viewportData.min_point.y + self.viewportData.max_point.y
     self.setFixedSize(QtCore.QSize(width, height))
     self.setWindowTitle(f'Objects (Window {width}x{height}px)')
-
 
   def setBackgroundColor(self):
     palette = self.palette()
@@ -35,13 +35,11 @@ class ObjectsRenderer(QtWidgets.QWidget):
     self.setPalette(palette)
     self.setAutoFillBackground(True)
 
-
   def paintEvent(self, event):
     self.drawViewportLimits()
     self.drawIndividualPoints()
     self.drawLines()
     self.drawPolygons()
-
 
   def drawViewportLimits(self):
     painter = QtGui.QPainter(self)
@@ -66,11 +64,9 @@ class ObjectsRenderer(QtWidgets.QWidget):
     qtTextPoint = QtCore.QPointF(self.viewportData.min_point.x + 5, self.viewportData.min_point.y + 12)
     self.drawText(painter, qtTextPoint, 'VIEWPORT LIMITS')
 
-
   def drawText(self, painter, qtPoint, text):
     painter.setFont(QtGui.QFont('Arial', 7))
     painter.drawText(qtPoint, text)
-
 
   def drawIndividualPoints(self):
     painter = QtGui.QPainter(self)
@@ -81,7 +77,6 @@ class ObjectsRenderer(QtWidgets.QWidget):
       qtPoint = QtCore.QPointF(point.x, point.y)
       painter.drawPoint(qtPoint)
       self.drawCoordinatesText(painter, qtPoint)
-
 
   def drawLines(self):
     painter = QtGui.QPainter(self)
@@ -96,7 +91,6 @@ class ObjectsRenderer(QtWidgets.QWidget):
       self.drawCoordinatesText(painter, qtPoint1)
       self.drawCoordinatesText(painter, qtPoint2)
 
-
   def drawPolygons(self):
     painter = QtGui.QPainter(self)
     pen = QtGui.QPen(QtGui.Qt.magenta)
@@ -110,7 +104,6 @@ class ObjectsRenderer(QtWidgets.QWidget):
         self.drawCoordinatesText(painter, qtPoint)
       painter.drawPolygon(qtPolygon)
   
-
   def drawCoordinatesText(self, painter, qtPoint):
     if not DRAW_COORDINATES: return
 

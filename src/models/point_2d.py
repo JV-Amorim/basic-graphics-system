@@ -1,4 +1,5 @@
-from utils import convert_dict_values_to_numeric
+from utils.typecast import convert_dict_values_to_numeric
+
 
 class Point2D:
   def __init__(self, x, y):
