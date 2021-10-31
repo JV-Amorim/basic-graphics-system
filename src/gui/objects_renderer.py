@@ -7,27 +7,19 @@ from PySide6 import QtCore, QtGui, QtWidgets
 DRAW_COORDINATES = True
 
 
-def render_objects(objects_data, viewport_data):
-  app = QtWidgets.QApplication()
-  window = ObjectsRenderer(objects_data, viewport_data)
-  window.show()
-  print('SUCCESS: Objects rendered.')
-  app.exec()
-
-
 class ObjectsRenderer(QtWidgets.QWidget):
   def __init__(self, objectsData, viewportData):
     super().__init__()
     self.objectsData = objectsData
     self.viewportData = viewportData
-    self.setWindowProperties()
+    self.setWidgetSize()
     self.setBackgroundColor()
+    print('SUCCESS: Objects rendered.')
 
-  def setWindowProperties(self):
-    width = self.viewportData.min_point.x + self.viewportData.max_point.x
-    height = self.viewportData.min_point.y + self.viewportData.max_point.y
+  def setWidgetSize(self):
+    width = self.viewportData.get_width()
+    height = self.viewportData.get_height()
     self.setFixedSize(QtCore.QSize(width, height))
-    self.setWindowTitle(f'Objects (Window {width}x{height}px)')
 
   def setBackgroundColor(self):
     palette = self.palette()
