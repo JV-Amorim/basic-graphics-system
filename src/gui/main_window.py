@@ -3,7 +3,9 @@ import sys
 from PySide6 import QtCore, QtWidgets
 from gui.new_object_form import NewObjectForm
 from gui.objects_renderer import ObjectsRenderer
+from models.line import Line
 from models.point_2d import Point2D
+from models.polygon import Polygon
 
 
 def start_gui(objects_data, viewport_data):
@@ -27,15 +29,18 @@ class MainWindow(QtWidgets.QWidget):
     self.initObjectsRenderer()
 
   def initMainContainer(self):
-    mainContainer = QtWidgets.QHBoxLayout(self)
-    self.setLayout(mainContainer)
-    self.mainContainer = mainContainer
+    self.mainContainer = QtWidgets.QHBoxLayout(self)
+    self.setLayout(self.mainContainer)
 
   def initSidePanel(self):
+    sidePanel = QtWidgets.QVBoxLayout()
+
     form = NewObjectForm()
     form.onPointInserted.connect(self.insertNewPoint)
-    sidePanel = QtWidgets.QVBoxLayout()
+    form.onLineInserted.connect(self.insertNewLine)
+    form.onPolygonInserted.connect(self.insertNewPolygon)
     sidePanel.addWidget(form)
+
     self.mainContainer.addLayout(sidePanel)
 
   def initObjectsRenderer(self):
@@ -48,8 +53,21 @@ class MainWindow(QtWidgets.QWidget):
     self.setFixedSize(QtCore.QSize(width + 300, height + 25))
     self.setWindowTitle('Window To Viewport Mapper')
 
+  def refreshObjectsRenderer(self):
+    self.mainContainer.removeWidget(self.objectsRenderer)
+    self.initObjectsRenderer()
+
   @QtCore.Slot(Point2D)
   def insertNewPoint(self, point):
     self.objectsData['individual_points'].append(point)
-    self.mainContainer.removeWidget(self.objectsRenderer)
-    self.initObjectsRenderer()
+    self.refreshObjectsRenderer()
+    
+  @QtCore.Slot(Line)
+  def insertNewLine(self, line):
+    self.objectsData['lines'].append(line)
+    self.refreshObjectsRenderer()
+
+  @QtCore.Slot(Polygon)
+  def insertNewPolygon(self, polygon):
+    self.objectsData['polygons'].append(polygon)
+    self.refreshObjectsRenderer()
