@@ -1,7 +1,7 @@
 import sys
 
 from PySide6 import QtCore, QtGui, QtWidgets
-from gui.new_object_form import NewObjectForm
+from gui.object_insertion_window import ObjectInsertionWindow
 from gui.objects_renderer import ObjectsRenderer
 from models.line import Line
 from models.point_2d import Point2D
@@ -36,9 +36,9 @@ class MainWindow(QtWidgets.QWidget):
     sidePanel = QtWidgets.QVBoxLayout()
     sidePanel.setAlignment(QtGui.Qt.AlignTop)
 
-    insertNewObjectButton = QtWidgets.QPushButton('Insert New Object')
-    insertNewObjectButton.clicked.connect(self.openNewObjectForm)
-    sidePanel.addWidget(insertNewObjectButton)
+    insertButton = QtWidgets.QPushButton('Insert Object')
+    insertButton.clicked.connect(self.openObjectInsertionWindow)
+    sidePanel.addWidget(insertButton)
 
     self.mainContainer.addLayout(sidePanel)
 
@@ -52,12 +52,12 @@ class MainWindow(QtWidgets.QWidget):
     self.setFixedSize(QtCore.QSize(width + 300, height + 25))
     self.setWindowTitle('Window To Viewport Mapper')
 
-  def openNewObjectForm(self):
-    form = NewObjectForm()
-    form.onPointInserted.connect(self.insertNewPoint)
-    form.onLineInserted.connect(self.insertNewLine)
-    form.onPolygonInserted.connect(self.insertNewPolygon)
-    form.show()
+  def openObjectInsertionWindow(self):
+    window = ObjectInsertionWindow()
+    window.onPointInserted.connect(self.insertNewPoint)
+    window.onLineInserted.connect(self.insertNewLine)
+    window.onPolygonInserted.connect(self.insertNewPolygon)
+    window.show()
 
   def refreshObjectsRenderer(self):
     self.mainContainer.removeWidget(self.objectsRenderer)
@@ -66,14 +66,17 @@ class MainWindow(QtWidgets.QWidget):
   @QtCore.Slot(Point2D)
   def insertNewPoint(self, point):
     self.objectsData['individual_points'].append(point)
+    print('SUCCESS: New point inserted.')
     self.refreshObjectsRenderer()
     
   @QtCore.Slot(Line)
   def insertNewLine(self, line):
     self.objectsData['lines'].append(line)
+    print('SUCCESS: New line inserted.')
     self.refreshObjectsRenderer()
 
   @QtCore.Slot(Polygon)
   def insertNewPolygon(self, polygon):
     self.objectsData['polygons'].append(polygon)
+    print('SUCCESS: New polygon inserted.')
     self.refreshObjectsRenderer()

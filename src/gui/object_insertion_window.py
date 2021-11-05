@@ -8,7 +8,7 @@ from utils.font import get_custom_font
 ITEMS_PER_FORM_ROW = 6
 
 
-class NewObjectForm(QtWidgets.QDialog):
+class ObjectInsertionWindow(QtWidgets.QDialog):
   onPointInserted = QtCore.Signal(Point2D)
   onLineInserted = QtCore.Signal(Line)
   onPolygonInserted = QtCore.Signal(Polygon)
@@ -27,7 +27,7 @@ class NewObjectForm(QtWidgets.QDialog):
   def initFormContainer(self):
     self.formContainer = QtWidgets.QVBoxLayout()
 
-    title = QtWidgets.QLabel('Insert New Object')
+    title = QtWidgets.QLabel('Insert Object')
     title.setFont(get_custom_font('bold', 14))
     self.formContainer.addWidget(title)
 
@@ -65,7 +65,7 @@ class NewObjectForm(QtWidgets.QDialog):
     self.formContainer.addWidget(insertButton)
 
   def setWindowProperties(self):
-    self.setWindowTitle('Insert New Object')
+    self.setWindowTitle('Insert Object')
     self.setModal(True)
     self.setFixedSize(300, 300)
 
