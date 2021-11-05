@@ -21,6 +21,8 @@ def start_gui(objects_data, viewport_data):
 
 
 class MainWindow(QtWidgets.QWidget):
+  currentOpenedDialog = None
+
   def __init__(self, objectsData, viewportData):
     super().__init__()
     self.objectsData = objectsData
@@ -80,10 +82,13 @@ class MainWindow(QtWidgets.QWidget):
     dialog.onPointInserted.connect(self.insertNewPoint)
     dialog.onLineInserted.connect(self.insertNewLine)
     dialog.onPolygonInserted.connect(self.insertNewPolygon)
+    self.currentOpenedDialog = dialog
     dialog.exec()
 
   def openObjectManagementDialog(self):
-    dialog = ObjectManagementDialog()
+    dialog = ObjectManagementDialog(self.objectsData)
+    dialog.onObjectRemoved.connect(self.removeObject)
+    self.currentOpenedDialog = dialog
     dialog.exec()
 
   def refreshObjectsRenderer(self):
@@ -107,3 +112,21 @@ class MainWindow(QtWidgets.QWidget):
     self.objectsData['polygons'].append(polygon)
     print('SUCCESS: New polygon inserted.')
     self.refreshObjectsRenderer()
+
+  # Receives a tuple.
+  @QtCore.Slot(object)
+  def removeObject(self, objectIndexes):
+    if objectIndexes[0] == 0:
+      point = self.objectsData['individual_points'][objectIndexes[1]]
+      self.objectsData['individual_points'].remove(point)
+
+    if objectIndexes[0] == 1:
+      line = self.objectsData['lines'][objectIndexes[1]]
+      self.objectsData['lines'].remove(line)
+
+    if objectIndexes[0] == 2:
+      polygon = self.objectsData['polygons'][objectIndexes[1]]
+      self.objectsData['polygons'].remove(polygon)
+    
+    self.refreshObjectsRenderer()
+    self.currentOpenedDialog.refreshObjectList(self.objectsData)
