@@ -1,6 +1,6 @@
 import sys
 
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 from gui.new_object_form import NewObjectForm
 from gui.objects_renderer import ObjectsRenderer
 from models.line import Line
@@ -34,12 +34,11 @@ class MainWindow(QtWidgets.QWidget):
 
   def initSidePanel(self):
     sidePanel = QtWidgets.QVBoxLayout()
+    sidePanel.setAlignment(QtGui.Qt.AlignTop)
 
-    form = NewObjectForm()
-    form.onPointInserted.connect(self.insertNewPoint)
-    form.onLineInserted.connect(self.insertNewLine)
-    form.onPolygonInserted.connect(self.insertNewPolygon)
-    sidePanel.addWidget(form)
+    insertNewObjectButton = QtWidgets.QPushButton('Insert New Object')
+    insertNewObjectButton.clicked.connect(self.openNewObjectForm)
+    sidePanel.addWidget(insertNewObjectButton)
 
     self.mainContainer.addLayout(sidePanel)
 
@@ -52,6 +51,13 @@ class MainWindow(QtWidgets.QWidget):
     height = self.viewportData.get_height()
     self.setFixedSize(QtCore.QSize(width + 300, height + 25))
     self.setWindowTitle('Window To Viewport Mapper')
+
+  def openNewObjectForm(self):
+    form = NewObjectForm()
+    form.onPointInserted.connect(self.insertNewPoint)
+    form.onLineInserted.connect(self.insertNewLine)
+    form.onPolygonInserted.connect(self.insertNewPolygon)
+    form.show()
 
   def refreshObjectsRenderer(self):
     self.mainContainer.removeWidget(self.objectsRenderer)

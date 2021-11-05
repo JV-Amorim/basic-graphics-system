@@ -8,7 +8,7 @@ from utils.font import get_custom_font
 ITEMS_PER_FORM_ROW = 6
 
 
-class NewObjectForm(QtWidgets.QWidget):
+class NewObjectForm(QtWidgets.QDialog):
   onPointInserted = QtCore.Signal(Point2D)
   onLineInserted = QtCore.Signal(Line)
   onPolygonInserted = QtCore.Signal(Polygon)
@@ -16,6 +16,7 @@ class NewObjectForm(QtWidgets.QWidget):
   def __init__(self):
     super().__init__()
     self.initUI()
+    self.setWindowProperties()
 
   def initUI(self):
     self.initFormContainer()
@@ -63,7 +64,12 @@ class NewObjectForm(QtWidgets.QWidget):
     insertButton.clicked.connect(self.insertNewObject)
     self.formContainer.addWidget(insertButton)
 
-  def insertFormRow(self):
+  def setWindowProperties(self):
+    self.setWindowTitle('Insert New Object')
+    self.setModal(True)
+    self.setFixedSize(300, 300)
+
+  def insertFormRow(self, xValue = 0, yValue = 0):
     newRowNumber = int(self.formLayout.count() / ITEMS_PER_FORM_ROW + 1)
 
     rowName = QtWidgets.QLabel(f'P{newRowNumber}')
@@ -77,6 +83,7 @@ class NewObjectForm(QtWidgets.QWidget):
     xInput = QtWidgets.QDoubleSpinBox()
     xInput.setMinimum(-10000)
     xInput.setMaximum(10000)
+    xInput.setValue(xValue)
     self.formLayout.addWidget(xInput, newRowNumber, 2)
 
     yLabel = QtWidgets.QLabel('Y')
@@ -86,6 +93,7 @@ class NewObjectForm(QtWidgets.QWidget):
     yInput = QtWidgets.QDoubleSpinBox()
     yInput.setMinimum(-10000)
     yInput.setMaximum(10000)
+    yInput.setValue(yValue)
     self.formLayout.addWidget(yInput, newRowNumber, 4)
 
     deleteButton = QtWidgets.QPushButton('X')
@@ -96,32 +104,34 @@ class NewObjectForm(QtWidgets.QWidget):
   def deleteFormRow(self, rowToDelete):
     rangeStart = (rowToDelete - 1) * ITEMS_PER_FORM_ROW
     rangeEnd = (rowToDelete) * ITEMS_PER_FORM_ROW
-    itemsToDelete = range(rangeStart, rangeEnd)
+    indexOfItemsToDelete = range(rangeStart, rangeEnd)
 
-    for index in reversed(itemsToDelete):
-      widgetToRemove = self.formLayout.itemAt(index).widget()
-      self.formLayout.removeWidget(widgetToRemove)
+    for index in reversed(indexOfItemsToDelete):
+      widgetToRemove = self.formLayout.takeAt(index).widget()
       widgetToRemove.setParent(None)
 
-    self.refreshFormRowsWithNewCount()
+    remainingXValues = []
+    remainingYValues = []
 
-  def refreshFormRowsWithNewCount(self):
-    for index in range(0, self.formLayout.count(), ITEMS_PER_FORM_ROW):
-      newRowNumber = int(index / ITEMS_PER_FORM_ROW + 1)
-      rowName = self.formLayout.itemAt(index).widget()
-      rowName.setText(f'P{newRowNumber}')
+    for index in range(2, self.formLayout.count(), ITEMS_PER_FORM_ROW):
+      xInput = self.formLayout.itemAt(index).widget()
+      remainingXValues.append(xInput.value())
 
-    for index in range(5, self.formLayout.count(), ITEMS_PER_FORM_ROW):
-      newRowNumber = int(index / ITEMS_PER_FORM_ROW + 1)
-      deleteButton = self.formLayout.itemAt(index).widget()
-      deleteButton.clicked.disconnect()
-      deleteButton.clicked.connect(lambda : self.deleteFormRow(newRowNumber))
+    for index in range(4, self.formLayout.count(), ITEMS_PER_FORM_ROW):
+      yInput = self.formLayout.itemAt(index).widget()
+      remainingYValues.append(yInput.value())
+
+    self.clearForm()
+    for index in range(len(remainingXValues)):
+      self.insertFormRow(remainingXValues[index], remainingYValues[index])
+
+  def clearForm(self):
+    for index in reversed(range(self.formLayout.count())):
+      widgetToRemove = self.formLayout.takeAt(index).widget()
+      widgetToRemove.setParent(None)
 
   def resetForm(self):
-    for index in reversed(range(self.formLayout.count())):
-      widgetToRemove = self.formLayout.itemAt(index).widget()
-      self.formLayout.removeWidget(widgetToRemove)
-      widgetToRemove.setParent(None)
+    self.clearForm()
     self.insertFormRow()
 
   @QtCore.Slot(str)
