@@ -1,7 +1,8 @@
 import sys
 
 from PySide6 import QtCore, QtGui, QtWidgets
-from gui.object_insertion_window import ObjectInsertionWindow
+from gui.object_insertion_dialog import ObjectInsertionDialog
+from gui.object_management_dialog import ObjectManagementDialog
 from gui.objects_renderer import ObjectsRenderer
 from models.line import Line
 from models.point_2d import Point2D
@@ -37,8 +38,12 @@ class MainWindow(QtWidgets.QWidget):
     sidePanel.setAlignment(QtGui.Qt.AlignTop)
 
     insertButton = QtWidgets.QPushButton('Insert Object')
-    insertButton.clicked.connect(self.openObjectInsertionWindow)
+    insertButton.clicked.connect(self.openObjectInsertionDialog)
     sidePanel.addWidget(insertButton)
+
+    editOrRemoveButton = QtWidgets.QPushButton('Edit/Remove Object')
+    editOrRemoveButton.clicked.connect(self.openObjectManagementDialog)
+    sidePanel.addWidget(editOrRemoveButton)
 
     self.mainContainer.addLayout(sidePanel)
 
@@ -52,12 +57,16 @@ class MainWindow(QtWidgets.QWidget):
     self.setFixedSize(QtCore.QSize(width + 300, height + 25))
     self.setWindowTitle('Window To Viewport Mapper')
 
-  def openObjectInsertionWindow(self):
-    window = ObjectInsertionWindow()
-    window.onPointInserted.connect(self.insertNewPoint)
-    window.onLineInserted.connect(self.insertNewLine)
-    window.onPolygonInserted.connect(self.insertNewPolygon)
-    window.show()
+  def openObjectInsertionDialog(self):
+    dialog = ObjectInsertionDialog()
+    dialog.onPointInserted.connect(self.insertNewPoint)
+    dialog.onLineInserted.connect(self.insertNewLine)
+    dialog.onPolygonInserted.connect(self.insertNewPolygon)
+    dialog.exec()
+
+  def openObjectManagementDialog(self):
+    dialog = ObjectManagementDialog()
+    dialog.exec()
 
   def refreshObjectsRenderer(self):
     self.mainContainer.removeWidget(self.objectsRenderer)

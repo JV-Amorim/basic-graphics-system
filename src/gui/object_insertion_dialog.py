@@ -6,9 +6,10 @@ from utils.font import get_custom_font
 
 
 ITEMS_PER_FORM_ROW = 6
+DIALOG_TITLE = 'Insert Object'
 
 
-class ObjectInsertionWindow(QtWidgets.QDialog):
+class ObjectInsertionDialog(QtWidgets.QDialog):
   onPointInserted = QtCore.Signal(Point2D)
   onLineInserted = QtCore.Signal(Line)
   onPolygonInserted = QtCore.Signal(Polygon)
@@ -27,7 +28,7 @@ class ObjectInsertionWindow(QtWidgets.QDialog):
   def initFormContainer(self):
     self.formContainer = QtWidgets.QVBoxLayout()
 
-    title = QtWidgets.QLabel('Insert Object')
+    title = QtWidgets.QLabel(DIALOG_TITLE)
     title.setFont(get_custom_font('bold', 14))
     self.formContainer.addWidget(title)
 
@@ -65,7 +66,7 @@ class ObjectInsertionWindow(QtWidgets.QDialog):
     self.formContainer.addWidget(insertButton)
 
   def setWindowProperties(self):
-    self.setWindowTitle('Insert Object')
+    self.setWindowTitle(DIALOG_TITLE)
     self.setModal(True)
     self.setFixedSize(300, 300)
 
