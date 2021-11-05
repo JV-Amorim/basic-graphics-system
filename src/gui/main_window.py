@@ -7,6 +7,10 @@ from gui.objects_renderer import ObjectsRenderer
 from models.line import Line
 from models.point_2d import Point2D
 from models.polygon import Polygon
+from utils.font import get_custom_font
+
+
+WINDOW_TITLE = 'Window To Viewport Mapper'
 
 
 def start_gui(objects_data, viewport_data):
@@ -21,8 +25,14 @@ class MainWindow(QtWidgets.QWidget):
     super().__init__()
     self.objectsData = objectsData
     self.viewportData = viewportData
-    self.initUI()
     self.setWindowProperties()
+    self.initUI()
+
+  def setWindowProperties(self):
+    width = self.viewportData.get_width()
+    height = self.viewportData.get_height()
+    self.setFixedSize(QtCore.QSize(width + 300, height + 25))
+    self.setWindowTitle(WINDOW_TITLE)
 
   def initUI(self):
     self.initMainContainer()
@@ -34,28 +44,36 @@ class MainWindow(QtWidgets.QWidget):
     self.setLayout(self.mainContainer)
 
   def initSidePanel(self):
-    sidePanel = QtWidgets.QVBoxLayout()
-    sidePanel.setAlignment(QtGui.Qt.AlignTop)
+    self.sidePanel = QtWidgets.QVBoxLayout()
+    self.sidePanel.setAlignment(QtGui.Qt.AlignTop)
 
-    insertButton = QtWidgets.QPushButton('Insert Object')
+    title = QtWidgets.QLabel(WINDOW_TITLE)
+    title.setFont(get_custom_font('bold', 14))
+    title.setAlignment(QtGui.Qt.AlignCenter)
+    self.sidePanel.addWidget(title)
+
+    self.initObjectManagementGroup()
+
+    self.mainContainer.addLayout(self.sidePanel)
+
+  def initObjectManagementGroup(self):
+    objectManagementLayout = QtWidgets.QVBoxLayout()
+
+    insertButton = QtWidgets.QPushButton('Insert ➕')
     insertButton.clicked.connect(self.openObjectInsertionDialog)
-    sidePanel.addWidget(insertButton)
+    objectManagementLayout.addWidget(insertButton)
 
-    editOrRemoveButton = QtWidgets.QPushButton('Edit/Remove Object')
+    editOrRemoveButton = QtWidgets.QPushButton('Edit/Remove 🖊')
     editOrRemoveButton.clicked.connect(self.openObjectManagementDialog)
-    sidePanel.addWidget(editOrRemoveButton)
+    objectManagementLayout.addWidget(editOrRemoveButton)
 
-    self.mainContainer.addLayout(sidePanel)
+    objectManagementGroup = QtWidgets.QGroupBox('Object Management')
+    objectManagementGroup.setLayout(objectManagementLayout)
+    self.sidePanel.addWidget(objectManagementGroup)
 
   def initObjectsRenderer(self):
     self.objectsRenderer = ObjectsRenderer(self.objectsData, self.viewportData)
     self.mainContainer.addWidget(self.objectsRenderer)
-
-  def setWindowProperties(self):
-    width = self.viewportData.get_width()
-    height = self.viewportData.get_height()
-    self.setFixedSize(QtCore.QSize(width + 300, height + 25))
-    self.setWindowTitle('Window To Viewport Mapper')
 
   def openObjectInsertionDialog(self):
     dialog = ObjectInsertionDialog()

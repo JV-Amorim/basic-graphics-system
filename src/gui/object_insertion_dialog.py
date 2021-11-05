@@ -16,8 +16,13 @@ class ObjectInsertionDialog(QtWidgets.QDialog):
 
   def __init__(self):
     super().__init__()
-    self.initUI()
     self.setWindowProperties()
+    self.initUI()
+
+  def setWindowProperties(self):
+    self.setWindowTitle(DIALOG_TITLE)
+    self.setModal(True)
+    self.setFixedSize(300, 270)
 
   def initUI(self):
     self.initFormContainer()
@@ -61,14 +66,9 @@ class ObjectInsertionDialog(QtWidgets.QDialog):
     self.insertFormRow()
 
   def initInsertButton(self):
-    insertButton = QtWidgets.QPushButton('Insert')
+    insertButton = QtWidgets.QPushButton('Insert ➕')
     insertButton.clicked.connect(self.insertNewObject)
     self.formContainer.addWidget(insertButton)
-
-  def setWindowProperties(self):
-    self.setWindowTitle(DIALOG_TITLE)
-    self.setModal(True)
-    self.setFixedSize(300, 300)
 
   def insertFormRow(self, xValue = 0, yValue = 0):
     newRowNumber = int(self.formLayout.count() / ITEMS_PER_FORM_ROW + 1)
@@ -97,7 +97,7 @@ class ObjectInsertionDialog(QtWidgets.QDialog):
     yInput.setValue(yValue)
     self.formLayout.addWidget(yInput, newRowNumber, 4)
 
-    deleteButton = QtWidgets.QPushButton('X')
+    deleteButton = QtWidgets.QPushButton('❌')
     deleteButton.setFixedWidth(20)
     deleteButton.clicked.connect(lambda : self.deleteFormRow(newRowNumber))
     self.formLayout.addWidget(deleteButton, newRowNumber, 5)
