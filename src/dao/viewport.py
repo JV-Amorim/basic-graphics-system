@@ -61,4 +61,4 @@ def write_viewport_file(viewport_data):
   create_directory_if_not_exists(VIEWPORT_FILE_PATH)
   tree.write(VIEWPORT_FILE_PATH + VIEWPORT_FILE_NAME, encoding = "utf-8", xml_declaration = True)
 
-  print('SUCCESS: Output file generation completed.')
+  print('Output file generation completed.')

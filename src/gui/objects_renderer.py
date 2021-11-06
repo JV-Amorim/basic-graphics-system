@@ -14,7 +14,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
     self.viewportData = viewportData
     self.setWidgetSize()
     self.setBackgroundColor()
-    print('SUCCESS: Objects rendered.')
+    print('Objects rendered.')
 
   def setWidgetSize(self):
     width = self.viewportData.get_width()

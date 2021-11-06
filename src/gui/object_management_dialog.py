@@ -1,15 +1,26 @@
 from PySide6 import QtCore, QtWidgets
 from gui.object_details_dialog import ObjectDetailsDialog
+from gui.object_insertion_dialog import ObjectInsertionDialog
+from models.line import Line
+from models.point_2d import Point2D
+from models.polygon import Polygon
 from utils.font import get_custom_font
 
 
-DIALOG_TITLE = 'Edit/Remove Objects'
+DIALOG_TITLE = 'Update/Delete Objects'
 ITEMS_PER_LIST_ROW = 5
 
 
 class ObjectManagementDialog(QtWidgets.QDialog):
-  # Emits a tuple.
+  # Emits a tuple (int, int).
   onObjectRemoved = QtCore.Signal(object)
+
+  onPointInserted = QtCore.Signal(Point2D)
+  onLineInserted = QtCore.Signal(Line)
+  onPolygonInserted = QtCore.Signal(Polygon)
+
+  currentOpenedDialog = None
+  indexOfObjectBeingUpdated = None
 
   def __init__(self, objectsData):
     super().__init__()
@@ -78,32 +89,66 @@ class ObjectManagementDialog(QtWidgets.QDialog):
     objectType = QtWidgets.QLabel(objectName)
     self.objectList.addWidget(objectType, newRowNumber, 1)
 
+    objectPoints = self.getObjectPoints(item, objectName)
+
     detailsButton = QtWidgets.QPushButton('🔍')
     detailsButton.setFixedWidth(25)
-    detailsButton.clicked.connect(lambda : self.openObjectDetailsDialog(item, objectName))
+    detailsButton.clicked.connect(lambda : self.openObjectDetailsDialog(objectPoints, objectName))
     self.objectList.addWidget(detailsButton, newRowNumber, 2)
 
-    editButton = QtWidgets.QPushButton('🖊')
-    editButton.setFixedWidth(25)
-    self.objectList.addWidget(editButton, newRowNumber, 3)
+    updateButton = QtWidgets.QPushButton('🖊')
+    updateButton.setFixedWidth(25)
+    updateButton.clicked.connect(lambda : self.openObjectUpdateDialog(objectPoints, indexes[1]))
+    self.objectList.addWidget(updateButton, newRowNumber, 3)
 
     deleteButton = QtWidgets.QPushButton('❌')
     deleteButton.setFixedWidth(25)
     deleteButton.clicked.connect(lambda : self.onObjectRemoved.emit(indexes))
     self.objectList.addWidget(deleteButton, newRowNumber, 4)
 
-  def openObjectDetailsDialog(self, object, objectName):
-    dialog = None
+  def getObjectPoints(self, object, objectName):
     if objectName == 'Point':
-      dialog = ObjectDetailsDialog([object], objectName)
-    elif objectName == 'Line':
-      dialog = ObjectDetailsDialog([object.point_1, object.point_2], objectName)
+      return [object]
+    if objectName == 'Line':
+      return [object.point_1, object.point_2]
     elif objectName == 'Polygon':
-      dialog = ObjectDetailsDialog(object.get_points(), objectName)
+      return object.get_points()
+
+  def openObjectDetailsDialog(self, objectPoints, objectName):
+    dialog = ObjectDetailsDialog(objectPoints, objectName)
     dialog.exec()
 
-  def refreshObjectList(self, objectsData):
+  def openObjectUpdateDialog(self, objectPoints, objectIndex):
+    self.indexOfObjectBeingUpdated = objectIndex
+
+    dialog = ObjectInsertionDialog(objectPoints)
+    dialog.onPointInserted.connect(self.updatePoint)
+    dialog.onLineInserted.connect(self.updateLine)
+    dialog.onPolygonInserted.connect(self.updatePolygon)
+
+    self.currentOpenedDialog = dialog
+    dialog.exec()
+
+  def refreshObjectsData(self, objectsData):
     objectList = self.mainContainer.takeAt(1).widget()
     objectList.setParent(None)
     self.objectsData = objectsData
     self.initObjectList()
+
+  @QtCore.Slot(Point2D)
+  def updatePoint(self, point):
+    self.currentOpenedDialog.close()
+    self.onObjectRemoved.emit((0, self.indexOfObjectBeingUpdated, False))
+    self.onPointInserted.emit(point)
+    
+  @QtCore.Slot(Line)
+  def updateLine(self, line):
+    self.currentOpenedDialog.close()
+    self.onObjectRemoved.emit((1, self.indexOfObjectBeingUpdated, False))
+    self.onLineInserted.emit(line)
+
+  @QtCore.Slot(Polygon)
+  def updatePolygon(self, polygon):
+    self.currentOpenedDialog.close()
+    self.onObjectRemoved.emit((2, self.indexOfObjectBeingUpdated, False))
+    self.onPolygonInserted.emit(polygon)

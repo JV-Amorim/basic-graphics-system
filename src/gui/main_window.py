@@ -8,6 +8,7 @@ from models.line import Line
 from models.point_2d import Point2D
 from models.polygon import Polygon
 from utils.font import get_custom_font
+from utils.object import method_exists
 
 
 WINDOW_TITLE = 'Window To Viewport Mapper'
@@ -65,9 +66,9 @@ class MainWindow(QtWidgets.QWidget):
     insertButton.clicked.connect(self.openObjectInsertionDialog)
     objectManagementLayout.addWidget(insertButton)
 
-    editOrRemoveButton = QtWidgets.QPushButton('Edit/Remove 🖊')
-    editOrRemoveButton.clicked.connect(self.openObjectManagementDialog)
-    objectManagementLayout.addWidget(editOrRemoveButton)
+    managementButton = QtWidgets.QPushButton('Update/Delete 🖊')
+    managementButton.clicked.connect(self.openObjectManagementDialog)
+    objectManagementLayout.addWidget(managementButton)
 
     objectManagementGroup = QtWidgets.QGroupBox('Object Management')
     objectManagementGroup.setLayout(objectManagementLayout)
@@ -79,15 +80,22 @@ class MainWindow(QtWidgets.QWidget):
 
   def openObjectInsertionDialog(self):
     dialog = ObjectInsertionDialog()
+
     dialog.onPointInserted.connect(self.insertNewPoint)
     dialog.onLineInserted.connect(self.insertNewLine)
     dialog.onPolygonInserted.connect(self.insertNewPolygon)
+    
     self.currentOpenedDialog = dialog
     dialog.exec()
 
   def openObjectManagementDialog(self):
     dialog = ObjectManagementDialog(self.objectsData)
-    dialog.onObjectRemoved.connect(self.removeObject)
+
+    dialog.onObjectRemoved.connect(self.deleteObject)
+    dialog.onPointInserted.connect(self.insertNewPoint)
+    dialog.onLineInserted.connect(self.insertNewLine)
+    dialog.onPolygonInserted.connect(self.insertNewPolygon)
+
     self.currentOpenedDialog = dialog
     dialog.exec()
 
@@ -95,27 +103,36 @@ class MainWindow(QtWidgets.QWidget):
     self.mainContainer.removeWidget(self.objectsRenderer)
     self.initObjectsRenderer()
 
+  def refreshCurrentDialog(self):
+    if method_exists(self.currentOpenedDialog, 'refreshObjectsData'):
+      self.currentOpenedDialog.refreshObjectsData(self.objectsData)
+
   @QtCore.Slot(Point2D)
   def insertNewPoint(self, point):
     self.objectsData['individual_points'].append(point)
-    print('SUCCESS: New point inserted.')
+    print('Point inserted.')
     self.refreshObjectsRenderer()
+    self.refreshCurrentDialog()
     
   @QtCore.Slot(Line)
   def insertNewLine(self, line):
     self.objectsData['lines'].append(line)
-    print('SUCCESS: New line inserted.')
+    print('Line inserted.')
     self.refreshObjectsRenderer()
+    self.refreshCurrentDialog()
 
   @QtCore.Slot(Polygon)
   def insertNewPolygon(self, polygon):
     self.objectsData['polygons'].append(polygon)
-    print('SUCCESS: New polygon inserted.')
+    print('Polygon inserted.')
     self.refreshObjectsRenderer()
+    self.refreshCurrentDialog()
 
-  # Receives a tuple.
+  # Receives a tuple (int, int, bool).
   @QtCore.Slot(object)
-  def removeObject(self, objectIndexes):
+  def deleteObject(self, objectIndexes):
+    print('Object deleted.')
+
     if objectIndexes[0] == 0:
       point = self.objectsData['individual_points'][objectIndexes[1]]
       self.objectsData['individual_points'].remove(point)
@@ -128,5 +145,7 @@ class MainWindow(QtWidgets.QWidget):
       polygon = self.objectsData['polygons'][objectIndexes[1]]
       self.objectsData['polygons'].remove(polygon)
     
-    self.refreshObjectsRenderer()
-    self.currentOpenedDialog.refreshObjectList(self.objectsData)
+    if len(objectIndexes) < 3 or objectIndexes[3] == True:
+      self.refreshObjectsRenderer()
+
+    self.refreshCurrentDialog()
