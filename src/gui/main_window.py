@@ -120,11 +120,11 @@ class MainWindow(QtWidgets.QWidget):
       point = self.objectsData['individual_points'][objectIndexes[1]]
       self.objectsData['individual_points'].remove(point)
 
-    if objectIndexes[0] == 1:
+    elif objectIndexes[0] == 1:
       line = self.objectsData['lines'][objectIndexes[1]]
       self.objectsData['lines'].remove(line)
 
-    if objectIndexes[0] == 2:
+    elif objectIndexes[0] == 2:
       polygon = self.objectsData['polygons'][objectIndexes[1]]
       self.objectsData['polygons'].remove(polygon)
     

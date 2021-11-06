@@ -7,13 +7,13 @@ def get_custom_font(weight, size = 12):
 
   if weight == 'light':
     font.setWeight(QtGui.QFont.Weight.Light)
-  if weight == 'normal':
+  elif weight == 'normal':
     font.setWeight(QtGui.QFont.Weight.Normal)
-  if weight == 'medium':
+  elif weight == 'medium':
     font.setWeight(QtGui.QFont.Weight.Medium)
-  if weight == 'bold':
+  elif weight == 'bold':
     font.setWeight(QtGui.QFont.Weight.Bold)
-  if weight == 'black':
+  elif weight == 'black':
     font.setWeight(QtGui.QFont.Weight.Black)
 
   return font

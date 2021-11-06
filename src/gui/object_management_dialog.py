@@ -1,4 +1,5 @@
 from PySide6 import QtCore, QtWidgets
+from gui.object_details_dialog import ObjectDetailsDialog
 from utils.font import get_custom_font
 
 
@@ -19,7 +20,7 @@ class ObjectManagementDialog(QtWidgets.QDialog):
   def setWindowProperties(self):
     self.setWindowTitle(DIALOG_TITLE)
     self.setModal(True)
-    self.setFixedSize(250, 360)
+    self.setFixedSize(280, 360)
 
   def initUI(self):
     self.initMainContainer()
@@ -66,20 +67,21 @@ class ObjectManagementDialog(QtWidgets.QDialog):
     rowName.setFixedWidth(25)
     self.objectList.addWidget(rowName, newRowNumber, 0)
 
-    objectType = QtWidgets.QLabel()
-
+    objectName = ''
     if type == 'individual_point':
-      objectType.setText('Point')
-    if type == 'line':
-      objectType.setText('Line')
-    if type == 'polygon':
-      objectType.setText('Polygon')
+      objectName = 'Point'
+    elif type == 'line':
+      objectName = 'Line'
+    elif type == 'polygon':
+      objectName = 'Polygon'
 
+    objectType = QtWidgets.QLabel(objectName)
     self.objectList.addWidget(objectType, newRowNumber, 1)
 
-    detailButton = QtWidgets.QPushButton('🔍')
-    detailButton.setFixedWidth(25)
-    self.objectList.addWidget(detailButton, newRowNumber, 2)
+    detailsButton = QtWidgets.QPushButton('🔍')
+    detailsButton.setFixedWidth(25)
+    detailsButton.clicked.connect(lambda : self.openObjectDetailsDialog(item, objectName))
+    self.objectList.addWidget(detailsButton, newRowNumber, 2)
 
     editButton = QtWidgets.QPushButton('🖊')
     editButton.setFixedWidth(25)
@@ -89,6 +91,16 @@ class ObjectManagementDialog(QtWidgets.QDialog):
     deleteButton.setFixedWidth(25)
     deleteButton.clicked.connect(lambda : self.onObjectRemoved.emit(indexes))
     self.objectList.addWidget(deleteButton, newRowNumber, 4)
+
+  def openObjectDetailsDialog(self, object, objectName):
+    dialog = None
+    if objectName == 'Point':
+      dialog = ObjectDetailsDialog([object], objectName)
+    elif objectName == 'Line':
+      dialog = ObjectDetailsDialog([object.point_1, object.point_2], objectName)
+    elif objectName == 'Polygon':
+      dialog = ObjectDetailsDialog(object.get_points(), objectName)
+    dialog.exec()
 
   def refreshObjectList(self, objectsData):
     objectList = self.mainContainer.takeAt(1).widget()
