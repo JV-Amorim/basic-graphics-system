@@ -14,15 +14,17 @@ from utils.object import method_exists
 WINDOW_TITLE = 'Window To Viewport Mapper'
 
 
-def start_gui(objects_data, viewport_data):
+def start_gui(objects_data, viewport_data, export_callback):
   app = QtWidgets.QApplication()
   window = MainWindow(objects_data, viewport_data)
+  window.onExportPointClicked.connect(lambda updated_objects_data : export_callback(updated_objects_data))
   window.show()
   sys.exit(app.exec())
 
 
 class MainWindow(QtWidgets.QWidget):
   currentOpenedDialog = None
+  onExportPointClicked = QtCore.Signal(object)
 
   def __init__(self, objectsData, viewportData):
     super().__init__()
@@ -69,6 +71,10 @@ class MainWindow(QtWidgets.QWidget):
     managementButton = QtWidgets.QPushButton('Update/Delete 🖊')
     managementButton.clicked.connect(self.openObjectManagementDialog)
     objectManagementLayout.addWidget(managementButton)
+
+    exportButton = QtWidgets.QPushButton('Export Data 💾')
+    exportButton.clicked.connect(lambda : self.onExportPointClicked.emit(self.objectsData))
+    objectManagementLayout.addWidget(exportButton)
 
     objectManagementGroup = QtWidgets.QGroupBox('Object Management')
     objectManagementGroup.setLayout(objectManagementLayout)
