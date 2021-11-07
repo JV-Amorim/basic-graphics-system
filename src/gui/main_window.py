@@ -11,7 +11,7 @@ from utils.font import get_custom_font
 from utils.object import method_exists
 
 
-WINDOW_TITLE = 'Window To Viewport Mapper'
+WINDOW_TITLE = 'Basic Graphics System'
 
 
 def start_gui(objects_data, viewport_data, export_callback):
