@@ -61,8 +61,8 @@ class ObjectDetailsDialog(QtWidgets.QDialog):
       self.pointsList.addWidget(QtWidgets.QLabel(''), index, 1)
       self.pointsList.addWidget(QtWidgets.QLabel(''), index, 4)
       self.pointsList.addWidget(xLabel, index, 2)
-      self.pointsList.addWidget(QtWidgets.QLabel(f'{point.x}'), index, 3)
+      self.pointsList.addWidget(QtWidgets.QLabel(f'{point.x:.1f}'), index, 3)
       self.pointsList.addWidget(yLabel, index, 5)
-      self.pointsList.addWidget(QtWidgets.QLabel(f'{point.y}'), index, 6)
+      self.pointsList.addWidget(QtWidgets.QLabel(f'{point.y:.1f}'), index, 6)
 
     self.mainContainer.addWidget(pointListScrollArea)
