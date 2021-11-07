@@ -101,4 +101,4 @@ class ObjectsRenderer(QtWidgets.QWidget):
 
     x, y = qtPoint.x(), qtPoint.y()
     tooltipPoint = QtCore.QPointF(x + 5, y + 10)
-    self.drawText(painter, tooltipPoint, f'({x}, {y})')
+    self.drawText(painter, tooltipPoint, f'({x:.1f}, {y:.1f})')
