@@ -58,6 +58,7 @@ class MainWindow(QtWidgets.QWidget):
     self.sidePanel.addWidget(title)
 
     self.initObjectManagementGroup()
+    self.initWindowTransformationsGroup()
 
     self.mainContainer.addLayout(self.sidePanel)
 
@@ -79,6 +80,49 @@ class MainWindow(QtWidgets.QWidget):
     objectManagementGroup = QtWidgets.QGroupBox('Object Management')
     objectManagementGroup.setLayout(objectManagementLayout)
     self.sidePanel.addWidget(objectManagementGroup)
+
+  def initWindowTransformationsGroup(self):
+    windowTranformationsLayout = QtWidgets.QGridLayout()
+
+    zoomInButton = QtWidgets.QPushButton('🔍+')
+    zoomInButton.setFont(get_custom_font('bold'))
+    windowTranformationsLayout.addWidget(zoomInButton, 0, 0)
+
+    moveUpButton = QtWidgets.QPushButton('˄')
+    moveUpButton.setFont(get_custom_font('bold'))
+    windowTranformationsLayout.addWidget(moveUpButton, 0, 1)
+
+    zoomOutButton = QtWidgets.QPushButton('🔍-')
+    zoomOutButton.setFont(get_custom_font('bold'))
+    windowTranformationsLayout.addWidget(zoomOutButton, 0, 2)
+
+    moveLeftButton = QtWidgets.QPushButton('<')
+    moveLeftButton.setFont(get_custom_font('bold'))
+    windowTranformationsLayout.addWidget(moveLeftButton, 1, 0)
+
+    resetButton = QtWidgets.QPushButton('RESET')
+    resetButton.setFont(get_custom_font('normal', 10))
+    windowTranformationsLayout.addWidget(resetButton, 1, 1)
+
+    moveRightButton = QtWidgets.QPushButton('>')
+    moveRightButton.setFont(get_custom_font('bold'))
+    windowTranformationsLayout.addWidget(moveRightButton, 1, 2)
+
+    rotateLeft = QtWidgets.QPushButton('↩')
+    rotateLeft.setFont(get_custom_font('bold'))
+    windowTranformationsLayout.addWidget(rotateLeft, 2, 0)
+
+    moveDownButton = QtWidgets.QPushButton('˅')
+    moveDownButton.setFont(get_custom_font('bold'))
+    windowTranformationsLayout.addWidget(moveDownButton, 2, 1)
+
+    rotateRight = QtWidgets.QPushButton('↪')
+    rotateRight.setFont(get_custom_font('bold'))
+    windowTranformationsLayout.addWidget(rotateRight, 2, 2)
+  
+    windowTranformationsGroup = QtWidgets.QGroupBox('Window Transformations')
+    windowTranformationsGroup.setLayout(windowTranformationsLayout)
+    self.sidePanel.addWidget(windowTranformationsGroup)
 
   def initObjectsRenderer(self):
     self.objectsRenderer = ObjectsRenderer(self.objectsData, self.viewportData)
