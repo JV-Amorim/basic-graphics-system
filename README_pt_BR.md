@@ -81,8 +81,6 @@ O arquivo de entrada já possui alguns dados definidos. Novos dados podem ser ad
 
 Execute `py src/main.py` ou `python src/main.py` no terminal.
 
-When using the argument `-n` or `--new-file`, the program will read the alternate XML input file (only available if the objects data have been exported previously in the program).
-
 Ao utilizar o argumento `-n` ou `--new-file`, o programa lerá o arquivo de entrada XML alternativo (apenas disponível se os dados dos objectos foram exportados anteriormente no programa).
 
 O arquivo de saída contendo as coordenadas de viewport de cada objeto pode ser encontrado em `data/output/viewport-coordinates.xml`.
