@@ -2,12 +2,12 @@ import os
 import xml.etree.ElementTree as ET
 
 from mappers.viewport_to_window import ViewportToWindowMapper
-from models.line import Line
-from models.point_2d import Point2D
-from models.point_3d import Point3D
-from models.polygon import Polygon
-from models.viewport import Viewport
-from models.window import Window
+from models.classes.line import Line
+from models.classes.point_2d import Point2D
+from models.classes.point_3d import Point3D
+from models.classes.polygon import Polygon
+from models.classes.viewport import Viewport
+from models.classes.window import Window
 from utils.io import create_directory_if_not_exists
 from utils.xml import indent_xml
 

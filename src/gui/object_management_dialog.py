@@ -1,9 +1,9 @@
 from PySide6 import QtCore, QtWidgets
 from gui.object_details_dialog import ObjectDetailsDialog
 from gui.object_insertion_dialog import ObjectInsertionDialog
-from models.line import Line
-from models.point_2d import Point2D
-from models.polygon import Polygon
+from models.classes.line import Line
+from models.classes.point_2d import Point2D
+from models.classes.polygon import Polygon
 from utils.font import get_custom_font
 
 

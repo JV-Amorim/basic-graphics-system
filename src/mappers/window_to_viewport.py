@@ -1,6 +1,6 @@
-from models.line import Line
-from models.point_2d import Point2D
-from models.polygon import Polygon
+from models.classes.line import Line
+from models.classes.point_2d import Point2D
+from models.classes.polygon import Polygon
 
 
 class WindowToViewportMapper:

@@ -4,7 +4,7 @@
 import math
 import numpy
 
-from models.point_2d import Point2D
+from models.classes.point_2d import Point2D
 
 
 class WcsToNcsMapper:
