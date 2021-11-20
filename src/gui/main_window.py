@@ -17,7 +17,7 @@ WINDOW_TITLE = 'Basic Graphics System'
 main_window = None
 
 
-def start_gui(objects_data, viewport_data, export_callback, transformation_callback):
+def start_gui(objects_data, viewport_data, update_objects_callback, window_transformations_callback):
   global main_window
 
   if main_window != None:
@@ -27,17 +27,19 @@ def start_gui(objects_data, viewport_data, export_callback, transformation_callb
 
   app = QtWidgets.QApplication()
   main_window = MainWindow(objects_data, viewport_data)
-  main_window.onExportPointClicked.connect(lambda updated_objects_data : export_callback(updated_objects_data))
-  main_window.onTransformationApplied.connect(lambda transformation_type : transformation_callback(transformation_type))
+  main_window.onObjectsUpdated.connect(lambda objects_data : update_objects_callback(objects_data[0], objects_data[1]))
+  main_window.onTransformationApplied.connect(lambda type : window_transformations_callback(type))
   main_window.show()
 
   sys.exit(app.exec())
 
 
 class MainWindow(QtWidgets.QWidget):
-  currentOpenedDialog = None
-  onExportPointClicked = QtCore.Signal(object)
+  # Emits a tuple (objects_data, is_to_export_data).
+  onObjectsUpdated = QtCore.Signal(object)
+
   onTransformationApplied = QtCore.Signal(WindowTransformations)
+  currentOpenedDialog = None
 
   def __init__(self, objectsData, viewportData):
     super().__init__()
@@ -88,7 +90,7 @@ class MainWindow(QtWidgets.QWidget):
     objectManagementLayout.addWidget(managementButton)
 
     exportButton = QtWidgets.QPushButton('Export Data 💾')
-    exportButton.clicked.connect(lambda : self.onExportPointClicked.emit(self.objectsData))
+    exportButton.clicked.connect(lambda : self.onObjectsUpdated.emit((self.objectsData, True)))
     objectManagementLayout.addWidget(exportButton)
 
     objectManagementGroup = QtWidgets.QGroupBox('Object Management')
@@ -150,21 +152,21 @@ class MainWindow(QtWidgets.QWidget):
   def insertNewPoint(self, point):
     self.objectsData['individual_points'].append(point)
     print('Point inserted.')
-    self.refreshObjectsRenderer()
+    self.onObjectsUpdated.emit((self.objectsData, False))
     self.refreshCurrentDialog()
     
   @QtCore.Slot(Line)
   def insertNewLine(self, line):
     self.objectsData['lines'].append(line)
     print('Line inserted.')
-    self.refreshObjectsRenderer()
+    self.onObjectsUpdated.emit((self.objectsData, False))
     self.refreshCurrentDialog()
 
   @QtCore.Slot(Polygon)
   def insertNewPolygon(self, polygon):
     self.objectsData['polygons'].append(polygon)
     print('Polygon inserted.')
-    self.refreshObjectsRenderer()
+    self.onObjectsUpdated.emit((self.objectsData, False))
     self.refreshCurrentDialog()
 
   # Receives a tuple (int, int, bool).
@@ -185,6 +187,6 @@ class MainWindow(QtWidgets.QWidget):
       self.objectsData['polygons'].remove(polygon)
     
     if len(objectIndexes) < 3 or objectIndexes[3] == True:
-      self.refreshObjectsRenderer()
+      self.onObjectsUpdated.emit((self.objectsData, False))
 
     self.refreshCurrentDialog()
