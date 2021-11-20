@@ -75,7 +75,8 @@ The input file already has some data defined. New data can be added if desired. 
 
 - Python 3.10 or further version installed;
 - A terminal with access to Python;
-- PySide6 installed. You can install it running `pip install pyside6==6.2.0` in the terminal.
+- PySide6 installed. You can install it running `pip install pyside6==6.2.0` in the terminal;
+- NumPy installed. You can install it running `pip install numpy` in the terminal.
 
 ### Commands
 
