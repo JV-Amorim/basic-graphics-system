@@ -131,7 +131,7 @@ def write_new_window_file(window_data):
   w_min_point = window_data['window'].min_point
   w_max_point = window_data['window'].max_point
 
-  viewport_elem = ET.SubElement(root, 'window')
+  viewport_elem = ET.SubElement(root, 'viewport')
   ET.SubElement(viewport_elem, 'vpmin', x = str(v_min_point.x), y = str(v_min_point.y))
   ET.SubElement(viewport_elem, 'vpmax', x = str(v_max_point.x), y = str(v_max_point.y))
 
