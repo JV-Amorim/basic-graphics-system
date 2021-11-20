@@ -4,27 +4,40 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from gui.object_insertion_dialog import ObjectInsertionDialog
 from gui.object_management_dialog import ObjectManagementDialog
 from gui.objects_renderer import ObjectsRenderer
+from gui.window_transformations_group import WindowTransformationsGroup
 from models.classes.line import Line
 from models.classes.point_2d import Point2D
 from models.classes.polygon import Polygon
+from models.enums.window_transformations import WindowTransformations
 from utils.font import get_custom_font
 from utils.object import method_exists
 
 
 WINDOW_TITLE = 'Basic Graphics System'
+main_window = None
 
 
-def start_gui(objects_data, viewport_data, export_callback):
+def start_gui(objects_data, viewport_data, export_callback, transformation_callback):
+  global main_window
+
+  if main_window != None:
+    main_window.objectsData = objects_data
+    main_window.refreshObjectsRenderer()
+    return
+
   app = QtWidgets.QApplication()
-  window = MainWindow(objects_data, viewport_data)
-  window.onExportPointClicked.connect(lambda updated_objects_data : export_callback(updated_objects_data))
-  window.show()
+  main_window = MainWindow(objects_data, viewport_data)
+  main_window.onExportPointClicked.connect(lambda updated_objects_data : export_callback(updated_objects_data))
+  main_window.onTransformationApplied.connect(lambda transformation_type : transformation_callback(transformation_type))
+  main_window.show()
+
   sys.exit(app.exec())
 
 
 class MainWindow(QtWidgets.QWidget):
   currentOpenedDialog = None
   onExportPointClicked = QtCore.Signal(object)
+  onTransformationApplied = QtCore.Signal(WindowTransformations)
 
   def __init__(self, objectsData, viewportData):
     super().__init__()
@@ -82,47 +95,9 @@ class MainWindow(QtWidgets.QWidget):
     self.sidePanel.addWidget(objectManagementGroup)
 
   def initWindowTransformationsGroup(self):
-    windowTranformationsLayout = QtWidgets.QGridLayout()
-
-    zoomInButton = QtWidgets.QPushButton('🔍+')
-    zoomInButton.setFont(get_custom_font('bold'))
-    windowTranformationsLayout.addWidget(zoomInButton, 0, 0)
-
-    moveUpButton = QtWidgets.QPushButton('˄')
-    moveUpButton.setFont(get_custom_font('bold'))
-    windowTranformationsLayout.addWidget(moveUpButton, 0, 1)
-
-    zoomOutButton = QtWidgets.QPushButton('🔍-')
-    zoomOutButton.setFont(get_custom_font('bold'))
-    windowTranformationsLayout.addWidget(zoomOutButton, 0, 2)
-
-    moveLeftButton = QtWidgets.QPushButton('<')
-    moveLeftButton.setFont(get_custom_font('bold'))
-    windowTranformationsLayout.addWidget(moveLeftButton, 1, 0)
-
-    resetButton = QtWidgets.QPushButton('RESET')
-    resetButton.setFont(get_custom_font('normal', 10))
-    windowTranformationsLayout.addWidget(resetButton, 1, 1)
-
-    moveRightButton = QtWidgets.QPushButton('>')
-    moveRightButton.setFont(get_custom_font('bold'))
-    windowTranformationsLayout.addWidget(moveRightButton, 1, 2)
-
-    rotateLeft = QtWidgets.QPushButton('↩')
-    rotateLeft.setFont(get_custom_font('bold'))
-    windowTranformationsLayout.addWidget(rotateLeft, 2, 0)
-
-    moveDownButton = QtWidgets.QPushButton('˅')
-    moveDownButton.setFont(get_custom_font('bold'))
-    windowTranformationsLayout.addWidget(moveDownButton, 2, 1)
-
-    rotateRight = QtWidgets.QPushButton('↪')
-    rotateRight.setFont(get_custom_font('bold'))
-    windowTranformationsLayout.addWidget(rotateRight, 2, 2)
-  
-    windowTranformationsGroup = QtWidgets.QGroupBox('Window Transformations')
-    windowTranformationsGroup.setLayout(windowTranformationsLayout)
-    self.sidePanel.addWidget(windowTranformationsGroup)
+    windowTransformationsGroup = WindowTransformationsGroup()
+    windowTransformationsGroup.onButtonClicked.connect(lambda t : self.onTransformationApplied.emit(t))
+    self.sidePanel.addWidget(windowTransformationsGroup)
 
   def initObjectsRenderer(self):
     self.objectsRenderer = ObjectsRenderer(self.objectsData, self.viewportData)
