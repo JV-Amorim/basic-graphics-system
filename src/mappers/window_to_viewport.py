@@ -11,9 +11,9 @@ class WindowToViewportMapper:
     w_min, w_max = self.__window.min_point, self.__window.max_point
     v_min, v_max = self.__viewport.min_point, self.__viewport.max_point
 
-    viewport_x = (window_point.x - w_min.x) / (w_max.x - w_min.x) * (v_max.x - v_min.x)
+    viewport_x = (window_point.x_ncs - w_min.x_ncs) / (w_max.x_ncs - w_min.x_ncs) * (v_max.x - v_min.x)
 
-    viewport_y = (1 - ((window_point.y - w_min.y) / (w_max.y - w_min.y))) * (v_max.y - v_min.y)
+    viewport_y = (1 - ((window_point.y_ncs - w_min.y_ncs) / (w_max.y_ncs - w_min.y_ncs))) * (v_max.y - v_min.y)
 
     return Point2D(viewport_x, viewport_y)
 

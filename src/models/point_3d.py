@@ -1,7 +1,13 @@
+import numpy
+
 from utils.typecast import convert_dict_values_to_numeric
 
 
 class Point3D:
+  x_ncs = None
+  y_ncs = None
+  z_ncs = None
+
   def __init__(self, x, y, z):
     is_x_number = isinstance(x, int) or isinstance(x, float)
     is_y_number = isinstance(y, int) or isinstance(y, float)
@@ -13,6 +19,8 @@ class Point3D:
     self.x, self.y, self.z = x, y, z
 
   def __repr__(self):
+    if self.x_ncs != None and self.y_ncs != None and self.z_ncs != None:
+      return f'[NCS]({self.x_ncs}, {self.y_ncs}, {self.z_ncs})'
     return f'({self.x}, {self.y}, {self.z})'
 
   def __eq__(self, other):
@@ -24,6 +32,13 @@ class Point3D:
     is_z_equal = self.z == other.z
 
     return is_x_equal and is_y_equal and is_z_equal
+
+  def set_ncs_values(self, transformation_matrix):
+    numpy_wcs_point = numpy.array([self.x, self.y, self.z])
+    numpy_ncs_point = numpy_wcs_point.dot(transformation_matrix)
+    self.x_ncs = numpy_ncs_point[0]
+    self.y_ncs = numpy_ncs_point[1]
+    self.z_ncs = numpy_ncs_point[2]
 
   def create_from_xml_attrib_dict(dict):
     dict = convert_dict_values_to_numeric(dict, 'float')
