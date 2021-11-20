@@ -1,17 +1,12 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
 
-# Set as False to not draw the coordinates of each point.
-# Defina como False para não desenhar as coordenadas de cada ponto.
-# TODO - Create button in GUI to set this option.
-DRAW_COORDINATES = True
-
-
 class ObjectsRenderer(QtWidgets.QWidget):
-  def __init__(self, objectsData, viewportData):
+  def __init__(self, objectsData, viewportData, drawCoordinates):
     super().__init__()
     self.objectsData = objectsData
     self.viewportData = viewportData
+    self.drawCoordinates = drawCoordinates
     self.setWidgetSize()
     self.setBackgroundColor()
     print('Objects rendered.')
@@ -97,7 +92,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
       painter.drawPolygon(qtPolygon)
   
   def drawCoordinatesText(self, painter, qtPoint):
-    if not DRAW_COORDINATES: return
+    if not self.drawCoordinates: return
 
     x, y = qtPoint.x(), qtPoint.y()
     tooltipPoint = QtCore.QPointF(x + 5, y + 10)

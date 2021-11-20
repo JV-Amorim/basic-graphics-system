@@ -72,6 +72,7 @@ class MainWindow(QtWidgets.QWidget):
 
     self.initObjectManagementGroup()
     self.initWindowTransformationsGroup()
+    self.initGeneralOptionsGroup()
 
     self.mainContainer.addLayout(self.sidePanel)
 
@@ -99,8 +100,21 @@ class MainWindow(QtWidgets.QWidget):
     windowTransformationsGroup.onButtonClicked.connect(lambda t : self.onTransformationApplied.emit(t))
     self.sidePanel.addWidget(windowTransformationsGroup)
 
+  def initGeneralOptionsGroup(self):
+    generalOptionsLayout = QtWidgets.QVBoxLayout()
+
+    self.drawCoordinatesCheckbox = QtWidgets.QCheckBox('Draw Coordinates')
+    self.drawCoordinatesCheckbox.click()
+    self.drawCoordinatesCheckbox.clicked.connect(self.refreshObjectsRenderer)
+    generalOptionsLayout.addWidget(self.drawCoordinatesCheckbox)
+
+    generalOptionsGroup = QtWidgets.QGroupBox('General Options')
+    generalOptionsGroup.setLayout(generalOptionsLayout)
+    self.sidePanel.addWidget(generalOptionsGroup)
+
   def initObjectsRenderer(self):
-    self.objectsRenderer = ObjectsRenderer(self.objectsData, self.viewportData)
+    isToDrawCoordinates = self.drawCoordinatesCheckbox.isChecked()
+    self.objectsRenderer = ObjectsRenderer(self.objectsData, self.viewportData, isToDrawCoordinates)
     self.mainContainer.addWidget(self.objectsRenderer)
 
   def openObjectInsertionDialog(self):
