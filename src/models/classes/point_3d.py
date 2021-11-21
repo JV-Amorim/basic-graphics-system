@@ -33,8 +33,10 @@ class Point3D:
 
     return is_x_equal and is_y_equal and is_z_equal
 
-  def set_ncs_values(self, transformation_matrix):
-    numpy_wcs_point = numpy.array([self.x, self.y, self.z])
+  def set_ncs_values(self, translation_values, transformation_matrix):
+    translated_x = self.x + translation_values[0]
+    translated_y = self.y + translation_values[1]
+    numpy_wcs_point = numpy.array([translated_x, translated_y, self.z])
     numpy_ncs_point = numpy_wcs_point.dot(transformation_matrix)
     self.x_ncs = numpy_ncs_point[0]
     self.y_ncs = numpy_ncs_point[1]
