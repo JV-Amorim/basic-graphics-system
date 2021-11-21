@@ -1,4 +1,5 @@
 import copy
+import math
 
 from models.enums.window_transformations import WindowTransformations
 
@@ -31,9 +32,9 @@ class Window:
     elif transformation_type == WindowTransformations.MOVE_LEFT:
       self.apply_x_translation(-1)
     elif transformation_type == WindowTransformations.ROTATE_LEFT:
-      self.apply_rotation(10)
-    elif transformation_type == WindowTransformations.ROTATE_RIGHT:
       self.apply_rotation(-10)
+    elif transformation_type == WindowTransformations.ROTATE_RIGHT:
+      self.apply_rotation(10)
 
   def reset_transformations(self):
     self.min_point = copy.deepcopy(self.original_min_point)
@@ -53,4 +54,14 @@ class Window:
     self.max_point.y -= translation_value
 
   def apply_rotation(self, rotation_in_degrees):
-    self.current_rotation -= rotation_in_degrees
+    self.current_rotation += rotation_in_degrees
+
+    rotation_in_radians = math.radians(rotation_in_degrees)
+    rotation_cos = math.cos(rotation_in_radians)
+    rotation_sin = math.sin(rotation_in_radians)
+
+    self.min_point.x = self.min_point.x * rotation_cos - self.min_point.y * rotation_sin
+    self.min_point.y = self.min_point.x * rotation_sin + self.min_point.y * rotation_cos
+
+    self.max_point.x = self.max_point.x * rotation_cos - self.max_point.y * rotation_sin
+    self.max_point.y = self.max_point.x * rotation_sin + self.max_point.y * rotation_cos
