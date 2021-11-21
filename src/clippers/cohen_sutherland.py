@@ -2,6 +2,7 @@ from enum import Enum
 from models.classes.line import Line
 from models.classes.point_2d import Point2D
 from models.classes.point_3d import Point3D
+from utils.object import attribute_exists
 
 
 # REGION CODES
@@ -99,14 +100,24 @@ class CohenSutherlandClipper:
     }
 
   def generate_result_line(self, line, p1, p2):
-    line_point_1 = Point3D(line.point_1.x, line.point_1.y, line.point_1.z)
+    line_point_1, line_point_2 = None, None
+
+    if attribute_exists(line.point_1, 'z'):
+      line_point_1 = Point3D(line.point_1.x, line.point_1.y, line.point_1.z)
+      line_point_1.z_ncs = line.point_1.z_ncs
+    else:
+      line_point_1 = Point2D(line.point_1.x, line.point_1.y)
+
     line_point_1.x_ncs = p1.x_ncs
     line_point_1.y_ncs = p1.y_ncs
-    line_point_1.z_ncs = line.point_1.z_ncs
 
-    line_point_2 = Point3D(line.point_2.x, line.point_2.y, line.point_2.z)
+    if attribute_exists(line.point_2, 'z'):
+      line_point_2 = Point3D(line.point_2.x, line.point_2.y, line.point_2.z)
+      line_point_2.z_ncs = line.point_2.z_ncs
+    else:
+      line_point_2 = Point2D(line.point_2.x, line.point_2.y)
+
     line_point_2.x_ncs = p2.x_ncs
     line_point_2.y_ncs = p2.y_ncs
-    line_point_2.z_ncs = line.point_2.z_ncs
 
     return Line(line_point_1, line_point_2)
