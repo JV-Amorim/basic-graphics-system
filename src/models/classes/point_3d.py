@@ -36,11 +36,11 @@ class Point3D:
   def set_ncs_values(self, translation_values, transformation_matrix):
     translated_x = self.x + translation_values[0]
     translated_y = self.y + translation_values[1]
-    numpy_wcs_point = numpy.array([translated_x, translated_y, self.z])
-    numpy_ncs_point = numpy_wcs_point.dot(transformation_matrix)
-    self.x_ncs = numpy_ncs_point[0]
-    self.y_ncs = numpy_ncs_point[1]
-    self.z_ncs = numpy_ncs_point[2]
+    numpy_wcs_point = numpy.array([[translated_x], [translated_y], [self.z]])
+    numpy_ncs_point = transformation_matrix.dot(numpy_wcs_point)
+    self.x_ncs = numpy_ncs_point[0][0]
+    self.y_ncs = numpy_ncs_point[1][0]
+    self.z_ncs = numpy_ncs_point[2][0]
 
   def create_from_xml_attrib_dict(dict):
     dict = convert_dict_values_to_numeric(dict, 'float')
