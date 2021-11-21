@@ -17,17 +17,18 @@ WINDOW_TITLE = 'Basic Graphics System'
 main_window = None
 
 
-def start_gui(objects_data, viewport_data, update_objects_callback, window_transformations_callback):
+def start_gui(viewport_dict, window_dict, update_window_dict_callback, window_transformations_callback):
   global main_window
 
   if main_window != None:
-    main_window.objectsData = objects_data
+    main_window.viewportDict = viewport_dict
+    main_window.windowDict = window_dict
     main_window.refreshObjectsRenderer()
     return
 
   app = QtWidgets.QApplication()
-  main_window = MainWindow(objects_data, viewport_data)
-  main_window.onObjectsUpdated.connect(lambda objects_data : update_objects_callback(objects_data[0], objects_data[1]))
+  main_window = MainWindow(viewport_dict, window_dict)
+  main_window.onObjectsUpdated.connect(lambda objects_data : update_window_dict_callback(objects_data[0], objects_data[1]))
   main_window.onTransformationApplied.connect(lambda type : window_transformations_callback(type))
   main_window.show()
 
@@ -37,20 +38,18 @@ def start_gui(objects_data, viewport_data, update_objects_callback, window_trans
 class MainWindow(QtWidgets.QWidget):
   # Emits a tuple (objects_data, is_to_export_data).
   onObjectsUpdated = QtCore.Signal(object)
-
   onTransformationApplied = QtCore.Signal(WindowTransformations)
   currentOpenedDialog = None
 
-  def __init__(self, objectsData, viewportData):
+  def __init__(self, viewportDict, windowDict):
     super().__init__()
-    self.objectsData = objectsData
-    self.viewportData = viewportData
-    self.setWindowProperties()
+    self.viewportDict, self.windowDict = viewportDict, windowDict
+    self.setWindowWidgetProperties()
     self.initUI()
 
-  def setWindowProperties(self):
-    width = self.viewportData.get_width()
-    height = self.viewportData.get_height()
+  def setWindowWidgetProperties(self):
+    width = self.windowDict['viewport'].get_width()
+    height = self.windowDict['viewport'].get_height()
     self.setFixedSize(QtCore.QSize(width + 300, height + 25))
     self.setWindowTitle(WINDOW_TITLE)
 
@@ -90,7 +89,7 @@ class MainWindow(QtWidgets.QWidget):
     objectManagementLayout.addWidget(managementButton)
 
     exportButton = QtWidgets.QPushButton('Export Data 💾')
-    exportButton.clicked.connect(lambda : self.onObjectsUpdated.emit((self.objectsData, True)))
+    exportButton.clicked.connect(lambda : self.onObjectsUpdated.emit((self.viewportDict, True)))
     objectManagementLayout.addWidget(exportButton)
 
     objectManagementGroup = QtWidgets.QGroupBox('Object Management')
@@ -116,7 +115,7 @@ class MainWindow(QtWidgets.QWidget):
 
   def initObjectsRenderer(self):
     isToDrawCoordinates = self.drawCoordinatesCheckbox.isChecked()
-    self.objectsRenderer = ObjectsRenderer(self.objectsData, self.viewportData, isToDrawCoordinates)
+    self.objectsRenderer = ObjectsRenderer(self.viewportDict, self.windowDict, isToDrawCoordinates)
     self.mainContainer.addWidget(self.objectsRenderer)
 
   def openObjectInsertionDialog(self):
@@ -130,7 +129,7 @@ class MainWindow(QtWidgets.QWidget):
     dialog.exec()
 
   def openObjectManagementDialog(self):
-    dialog = ObjectManagementDialog(self.objectsData)
+    dialog = ObjectManagementDialog(self.viewportDict)
 
     dialog.onObjectRemoved.connect(self.deleteObject)
     dialog.onPointInserted.connect(self.insertNewPoint)
@@ -146,27 +145,27 @@ class MainWindow(QtWidgets.QWidget):
 
   def refreshCurrentDialog(self):
     if method_exists(self.currentOpenedDialog, 'refreshObjectsData'):
-      self.currentOpenedDialog.refreshObjectsData(self.objectsData)
+      self.currentOpenedDialog.refreshObjectsData(self.viewportDict)
 
   @QtCore.Slot(Point2D)
   def insertNewPoint(self, point):
-    self.objectsData['individual_points'].append(point)
+    self.viewportDict['individual_points'].append(point)
     print('Point inserted.')
-    self.onObjectsUpdated.emit((self.objectsData, False))
+    self.onObjectsUpdated.emit((self.viewportDict, False))
     self.refreshCurrentDialog()
     
   @QtCore.Slot(Line)
   def insertNewLine(self, line):
-    self.objectsData['lines'].append(line)
+    self.viewportDict['lines'].append(line)
     print('Line inserted.')
-    self.onObjectsUpdated.emit((self.objectsData, False))
+    self.onObjectsUpdated.emit((self.viewportDict, False))
     self.refreshCurrentDialog()
 
   @QtCore.Slot(Polygon)
   def insertNewPolygon(self, polygon):
-    self.objectsData['polygons'].append(polygon)
+    self.viewportDict['polygons'].append(polygon)
     print('Polygon inserted.')
-    self.onObjectsUpdated.emit((self.objectsData, False))
+    self.onObjectsUpdated.emit((self.viewportDict, False))
     self.refreshCurrentDialog()
 
   # Receives a tuple (int, int, bool).
@@ -175,18 +174,18 @@ class MainWindow(QtWidgets.QWidget):
     print('Object deleted.')
 
     if objectIndexes[0] == 0:
-      point = self.objectsData['individual_points'][objectIndexes[1]]
-      self.objectsData['individual_points'].remove(point)
+      point = self.viewportDict['individual_points'][objectIndexes[1]]
+      self.viewportDict['individual_points'].remove(point)
 
     elif objectIndexes[0] == 1:
-      line = self.objectsData['lines'][objectIndexes[1]]
-      self.objectsData['lines'].remove(line)
+      line = self.viewportDict['lines'][objectIndexes[1]]
+      self.viewportDict['lines'].remove(line)
 
     elif objectIndexes[0] == 2:
-      polygon = self.objectsData['polygons'][objectIndexes[1]]
-      self.objectsData['polygons'].remove(polygon)
+      polygon = self.viewportDict['polygons'][objectIndexes[1]]
+      self.viewportDict['polygons'].remove(polygon)
     
-    if len(objectIndexes) < 3 or objectIndexes[3] == True:
-      self.onObjectsUpdated.emit((self.objectsData, False))
+    if len(objectIndexes) < 3 or objectIndexes[2] == True:
+      self.onObjectsUpdated.emit((self.viewportDict, False))
 
     self.refreshCurrentDialog()

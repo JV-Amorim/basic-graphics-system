@@ -38,7 +38,7 @@ class WindowDataReader:
     full_path = os.path.join(os.path.dirname(__file__), '..', '..', partial_path)
     self.xml_root = ET.parse(full_path).getroot()
 
-  def get_window_data(self):
+  def get_window_dict(self):
     viewport = self.create_viewport_object()
     window = self.create_window_object()
 
@@ -96,10 +96,10 @@ class WindowDataReader:
     return Polygon(points)
 
 
-def get_window_data_from_viewport_data(viewport_data):
+def get_window_dict_from_viewport_dict(viewport_data):
   mapper = ViewportToWindowMapper(viewport_data['window'], viewport_data['viewport'])
 
-  window_data = {
+  window_dict = {
     'window': viewport_data['window'],
     'viewport': viewport_data['viewport'],
     'individual_points': [],
@@ -109,27 +109,27 @@ def get_window_data_from_viewport_data(viewport_data):
 
   for v_point in viewport_data['individual_points']:
     w_point = mapper.viewport_to_window_point(v_point)
-    window_data['individual_points'].append(w_point)
+    window_dict['individual_points'].append(w_point)
 
   for v_line in viewport_data['lines']:
     w_line = mapper.viewport_to_window_line(v_line)
-    window_data['lines'].append(w_line)
+    window_dict['lines'].append(w_line)
 
   for v_polygon in viewport_data['polygons']:
     w_polygon = mapper.viewport_to_window_polygon(v_polygon)
-    window_data['polygons'].append(w_polygon)
+    window_dict['polygons'].append(w_polygon)
 
-  return window_data
+  return window_dict
 
 
-def write_new_window_file(window_data):
+def write_new_window_file(window_dict):
   root = ET.Element(ROOT_TAG)
   tree = ET.ElementTree(root)
 
-  v_min_point = window_data['viewport'].min_point
-  v_max_point = window_data['viewport'].max_point
-  w_min_point = window_data['window'].min_point
-  w_max_point = window_data['window'].max_point
+  v_min_point = window_dict['viewport'].min_point
+  v_max_point = window_dict['viewport'].max_point
+  w_min_point = window_dict['window'].min_point
+  w_max_point = window_dict['window'].max_point
 
   viewport_elem = ET.SubElement(root, 'viewport')
   ET.SubElement(viewport_elem, 'vpmin', x = str(v_min_point.x), y = str(v_min_point.y))
@@ -139,15 +139,15 @@ def write_new_window_file(window_data):
   ET.SubElement(window_elem, 'wmin', x = str(w_min_point.x), y = str(w_min_point.y), z = '0.0')
   ET.SubElement(window_elem, 'wmax', x = str(w_max_point.x), y = str(w_max_point.y), z = '0.0')
 
-  for point in window_data['individual_points']:
+  for point in window_dict['individual_points']:
     ET.SubElement(root, POINT_TAG, x = str(point.x), y = str(point.y), z = '0.0')
 
-  for line in window_data['lines']:
+  for line in window_dict['lines']:
     line_elem = ET.SubElement(root, LINE_TAG)
     ET.SubElement(line_elem, POINT_TAG, x = str(line.point_1.x), y = str(line.point_1.y), z = '0.0')
     ET.SubElement(line_elem, POINT_TAG, x = str(line.point_2.x), y = str(line.point_2.y), z = '0.0')
   
-  for polygon in window_data['polygons']:
+  for polygon in window_dict['polygons']:
     polygon_elem = ET.SubElement(root, POLYGON_TAG)
     for point in polygon.get_points():
       ET.SubElement(polygon_elem, POINT_TAG, x = str(point.x), y = str(point.y), z = '0.0')

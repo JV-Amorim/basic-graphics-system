@@ -15,7 +15,11 @@ class WindowToViewportMapper:
 
     viewport_y = (1 - ((window_point.y_ncs - w_min.y_ncs) / (w_max.y_ncs - w_min.y_ncs))) * (v_max.y - v_min.y)
 
-    return Point2D(viewport_x, viewport_y)
+    viewport_point = Point2D(viewport_x, viewport_y)
+    viewport_point.x_ncs = window_point.x_ncs
+    viewport_point.y_ncs = window_point.y_ncs
+    
+    return viewport_point
 
   def window_to_viewport_line(self, window_line):
     p1 = self.window_to_viewport_point(window_line.point_1)

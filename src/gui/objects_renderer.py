@@ -2,18 +2,18 @@ from PySide6 import QtCore, QtGui, QtWidgets
 
 
 class ObjectsRenderer(QtWidgets.QWidget):
-  def __init__(self, objectsData, viewportData, drawCoordinates):
+  def __init__(self, viewportDict, windowDict, isToDrawCoordinates):
     super().__init__()
-    self.objectsData = objectsData
-    self.viewportData = viewportData
-    self.drawCoordinates = drawCoordinates
+    self.viewportDict, self.windowDict = viewportDict, windowDict
+    self.isToDrawCoordinates = isToDrawCoordinates
+    self.viewport = windowDict['viewport']
     self.setWidgetSize()
     self.setBackgroundColor()
     print('Objects rendered.')
 
   def setWidgetSize(self):
-    width = self.viewportData.get_width()
-    height = self.viewportData.get_height()
+    width = self.viewport.get_width()
+    height = self.viewport.get_height()
     self.setFixedSize(QtCore.QSize(width, height))
 
   def setBackgroundColor(self):
@@ -33,10 +33,10 @@ class ObjectsRenderer(QtWidgets.QWidget):
     pen = QtGui.QPen(QtGui.Qt.white)
     painter.setPen(pen)
 
-    qtPoint1 = QtCore.QPointF(self.viewportData.min_point.x, self.viewportData.min_point.y)
-    qtPoint2 = QtCore.QPointF(self.viewportData.max_point.x, self.viewportData.min_point.y)
-    qtPoint3 = QtCore.QPointF(self.viewportData.max_point.x, self.viewportData.max_point.y)
-    qtPoint4 = QtCore.QPointF(self.viewportData.min_point.x, self.viewportData.max_point.y)
+    qtPoint1 = QtCore.QPointF(self.viewport.min_point.x, self.viewport.min_point.y)
+    qtPoint2 = QtCore.QPointF(self.viewport.max_point.x, self.viewport.min_point.y)
+    qtPoint3 = QtCore.QPointF(self.viewport.max_point.x, self.viewport.max_point.y)
+    qtPoint4 = QtCore.QPointF(self.viewport.min_point.x, self.viewport.max_point.y)
 
     qtLine1 = QtCore.QLineF(qtPoint1, qtPoint2)
     qtLine2 = QtCore.QLineF(qtPoint2, qtPoint3)
@@ -48,7 +48,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
     painter.drawLine(qtLine3)
     painter.drawLine(qtLine4)
 
-    qtTextPoint = QtCore.QPointF(self.viewportData.min_point.x + 5, self.viewportData.min_point.y + 12)
+    qtTextPoint = QtCore.QPointF(self.viewport.min_point.x + 5, self.viewport.min_point.y + 12)
     self.drawText(painter, qtTextPoint, 'VIEWPORT LIMITS')
 
   def drawText(self, painter, qtPoint, text):
@@ -60,7 +60,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
     pen = QtGui.QPen(QtGui.Qt.green)
     painter.setPen(pen)
 
-    for point in self.objectsData['individual_points']:
+    for point in self.viewportDict['individual_points']:
       qtPoint = QtCore.QPointF(point.x, point.y)
       painter.drawPoint(qtPoint)
       self.drawCoordinatesText(painter, qtPoint)
@@ -70,7 +70,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
     pen = QtGui.QPen(QtGui.Qt.cyan)
     painter.setPen(pen)
 
-    for line in self.objectsData['lines']:
+    for line in self.viewportDict['lines']:
       qtPoint1 = QtCore.QPointF(line.point_1.x, line.point_1.y)
       qtPoint2 = QtCore.QPointF(line.point_2.x, line.point_2.y)
       qtLine = QtCore.QLineF(qtPoint1, qtPoint2)
@@ -83,7 +83,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
     pen = QtGui.QPen(QtGui.Qt.magenta)
     painter.setPen(pen)
 
-    for polygon in self.objectsData['polygons']:
+    for polygon in self.viewportDict['polygons']:
       qtPolygon = QtGui.QPolygonF()
       for point in polygon.get_points():
         qtPoint = QtCore.QPointF(point.x, point.y)
@@ -92,7 +92,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
       painter.drawPolygon(qtPolygon)
   
   def drawCoordinatesText(self, painter, qtPoint):
-    if not self.drawCoordinates: return
+    if not self.isToDrawCoordinates: return
 
     x, y = qtPoint.x(), qtPoint.y()
     tooltipPoint = QtCore.QPointF(x + 5, y + 10)
