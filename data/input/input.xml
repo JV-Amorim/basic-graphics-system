@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <dados>
   <viewport>
-    <!-- Viewport para uma janela de visualização de 640x480px com margem de 10px. -->
+    <!-- Viewport com margem de 10px. -->
     <vpmin x="10" y="10" />
     <vpmax x="630" y="470" />
   </viewport>

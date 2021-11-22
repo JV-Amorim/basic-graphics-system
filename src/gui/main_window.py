@@ -3,7 +3,7 @@ import sys
 from PySide6 import QtCore, QtGui, QtWidgets
 from gui.object_insertion_dialog import ObjectInsertionDialog
 from gui.object_management_dialog import ObjectManagementDialog
-from gui.objects_renderer import ObjectsRenderer
+from gui.objects_renderer import OBJECTS_RENDERER_DIMENSIONS, ObjectsRenderer
 from gui.window_transformations_group import WindowTransformationsGroup
 from models.classes.line import Line
 from models.classes.point_2d import Point2D
@@ -48,9 +48,9 @@ class MainWindow(QtWidgets.QWidget):
     self.initUI()
 
   def setWindowWidgetProperties(self):
-    width = self.windowDict['viewport'].get_width()
-    height = self.windowDict['viewport'].get_height()
-    self.setFixedSize(QtCore.QSize(width + 300, height + 25))
+    width = OBJECTS_RENDERER_DIMENSIONS[0] + 300
+    height = OBJECTS_RENDERER_DIMENSIONS[1] + 25
+    self.setFixedSize(QtCore.QSize(width, height))
     self.setWindowTitle(WINDOW_TITLE)
 
   def initUI(self):
@@ -109,13 +109,19 @@ class MainWindow(QtWidgets.QWidget):
     self.drawCoordinatesCheckbox.clicked.connect(self.refreshObjectsRenderer)
     generalOptionsLayout.addWidget(self.drawCoordinatesCheckbox)
 
+    self.enableClippingCheckbox = QtWidgets.QCheckBox('Enable Clipping')
+    self.enableClippingCheckbox.click()
+    self.enableClippingCheckbox.clicked.connect(self.refreshObjectsRenderer)
+    generalOptionsLayout.addWidget(self.enableClippingCheckbox)
+
     generalOptionsGroup = QtWidgets.QGroupBox('General Options')
     generalOptionsGroup.setLayout(generalOptionsLayout)
     self.sidePanel.addWidget(generalOptionsGroup)
 
   def initObjectsRenderer(self):
-    isToDrawCoordinates = self.drawCoordinatesCheckbox.isChecked()
-    self.objectsRenderer = ObjectsRenderer(self.viewportDict, self.windowDict, isToDrawCoordinates)
+    isDrawCoordinatesEnabled = self.drawCoordinatesCheckbox.isChecked()
+    isClippingEnabled = self.enableClippingCheckbox.isChecked()
+    self.objectsRenderer = ObjectsRenderer(self.viewportDict, self.windowDict, isDrawCoordinatesEnabled, isClippingEnabled)
     self.mainContainer.addWidget(self.objectsRenderer)
 
   def openObjectInsertionDialog(self):

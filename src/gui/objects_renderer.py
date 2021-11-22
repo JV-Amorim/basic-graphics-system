@@ -1,19 +1,23 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
 
+OBJECTS_RENDERER_DIMENSIONS = (640, 480)
+
+
 class ObjectsRenderer(QtWidgets.QWidget):
-  def __init__(self, viewportDict, windowDict, isToDrawCoordinates):
+  def __init__(self, viewportDict, windowDict, isDrawCoordinatesEnabled, isClippingEnabled):
     super().__init__()
     self.viewportDict, self.windowDict = viewportDict, windowDict
-    self.isToDrawCoordinates = isToDrawCoordinates
+    self.isDrawCoordinatesEnabled = isDrawCoordinatesEnabled
+    self.isClippingEnabled = isClippingEnabled
     self.viewport = windowDict['viewport']
     self.setWidgetSize()
     self.setBackgroundColor()
     print('Objects rendered.')
 
   def setWidgetSize(self):
-    width = self.viewport.get_width()
-    height = self.viewport.get_height()
+    width = OBJECTS_RENDERER_DIMENSIONS[0]
+    height = OBJECTS_RENDERER_DIMENSIONS[1]
     self.setFixedSize(QtCore.QSize(width, height))
 
   def setBackgroundColor(self):
@@ -61,7 +65,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
     painter.setPen(pen)
 
     for point in self.viewportDict['individual_points']:
-      if point.completely_clipped:
+      if self.isClippingEnabled and point.completely_clipped:
         continue
       qtPoint = QtCore.QPointF(point.x, point.y)
       painter.drawPoint(qtPoint)
@@ -73,11 +77,16 @@ class ObjectsRenderer(QtWidgets.QWidget):
     painter.setPen(pen)
 
     for line in self.viewportDict['lines']:
-      if line.completely_clipped:
-        continue
-      qtPoint1 = QtCore.QPointF(line.clipped_point_1.x, line.clipped_point_1.y)
-      qtPoint2 = QtCore.QPointF(line.clipped_point_2.x, line.clipped_point_2.y)
-      qtLine = QtCore.QLineF(qtPoint1, qtPoint2)
+      if self.isClippingEnabled:
+        if line.completely_clipped:
+          continue
+        qtPoint1 = QtCore.QPointF(line.clipped_point_1.x, line.clipped_point_1.y)
+        qtPoint2 = QtCore.QPointF(line.clipped_point_2.x, line.clipped_point_2.y)
+        qtLine = QtCore.QLineF(qtPoint1, qtPoint2)
+      else:
+        qtPoint1 = QtCore.QPointF(line.point_1.x, line.point_1.y)
+        qtPoint2 = QtCore.QPointF(line.point_2.x, line.point_2.y)
+        qtLine = QtCore.QLineF(qtPoint1, qtPoint2)
       painter.drawLine(qtLine)
       self.drawCoordinatesText(painter, qtPoint1)
       self.drawCoordinatesText(painter, qtPoint2)
@@ -96,7 +105,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
       painter.drawPolygon(qtPolygon)
   
   def drawCoordinatesText(self, painter, qtPoint):
-    if not self.isToDrawCoordinates: return
+    if not self.isDrawCoordinatesEnabled: return
 
     x, y = qtPoint.x(), qtPoint.y()
     tooltipPoint = QtCore.QPointF(x + 5, y + 10)
