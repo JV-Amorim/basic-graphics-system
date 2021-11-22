@@ -61,6 +61,8 @@ class ObjectsRenderer(QtWidgets.QWidget):
     painter.setPen(pen)
 
     for point in self.viewportDict['individual_points']:
+      if point.completely_clipped:
+        continue
       qtPoint = QtCore.QPointF(point.x, point.y)
       painter.drawPoint(qtPoint)
       self.drawCoordinatesText(painter, qtPoint)
