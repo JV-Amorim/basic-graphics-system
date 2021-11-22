@@ -7,6 +7,9 @@ class Point2D:
   x_ncs = None
   y_ncs = None
 
+  x_clipped = None
+  y_clipped = None
+
   def __init__(self, x, y):
     is_x_number = isinstance(x, int) or isinstance(x, float)
     is_y_number = isinstance(y, int) or isinstance(y, float)

@@ -21,8 +21,10 @@ class ClippingResults(Enum):
 
 
 class CohenSutherlandClipper:
+
   def __init__(self, window):
     self.window = window
+
 
   def get_region_code(self, point):
     region_code = RC_INSIDE
@@ -38,6 +40,7 @@ class CohenSutherlandClipper:
       region_code |= RC_TOP
 
     return region_code
+
 
   def clip_line(self, line):
     p1, p2 = Point2D(0, 0), Point2D(0, 0)
@@ -94,12 +97,10 @@ class CohenSutherlandClipper:
 
       result = ClippingResults.LINE_CLIPPED
 
-    return {
-      'line': self.generate_result_line(line, p1, p2),
-      'result': result
-    }
+    return self.generate_result_line(result, line, p1, p2)
 
-  def generate_result_line(self, line, p1, p2):
+
+  def generate_result_line(self, result, line, p1, p2):
     line_point_1, line_point_2 = None, None
 
     if attribute_exists(line.point_1, 'z'):
@@ -108,8 +109,10 @@ class CohenSutherlandClipper:
     else:
       line_point_1 = Point2D(line.point_1.x, line.point_1.y)
 
-    line_point_1.x_ncs = p1.x_ncs
-    line_point_1.y_ncs = p1.y_ncs
+    line_point_1.x_clipped = p1.x_ncs
+    line_point_1.y_clipped = p1.y_ncs
+    line_point_1.x_ncs = line.point_1.x_ncs
+    line_point_1.y_ncs = line.point_1.y_ncs
 
     if attribute_exists(line.point_2, 'z'):
       line_point_2 = Point3D(line.point_2.x, line.point_2.y, line.point_2.z)
@@ -117,7 +120,12 @@ class CohenSutherlandClipper:
     else:
       line_point_2 = Point2D(line.point_2.x, line.point_2.y)
 
-    line_point_2.x_ncs = p2.x_ncs
-    line_point_2.y_ncs = p2.y_ncs
+    line_point_2.x_clipped = p2.x_ncs
+    line_point_2.y_clipped = p2.y_ncs
+    line_point_2.x_ncs = line.point_2.x_ncs
+    line_point_2.y_ncs = line.point_2.y_ncs
 
-    return Line(line_point_1, line_point_2)
+    result_line = Line(line_point_1, line_point_2)
+    result_line.completely_clipped = result == ClippingResults.COMPLETELY_OUTSIDE
+
+    return result_line

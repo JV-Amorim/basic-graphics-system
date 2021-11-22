@@ -8,6 +8,9 @@ class Point3D:
   y_ncs = None
   z_ncs = None
 
+  x_clipped = None
+  y_clipped = None
+
   def __init__(self, x, y, z):
     is_x_number = isinstance(x, int) or isinstance(x, float)
     is_y_number = isinstance(y, int) or isinstance(y, float)
@@ -40,7 +43,6 @@ class Point3D:
     numpy_ncs_point = transformation_matrix.dot(numpy_wcs_point)
     self.x_ncs = numpy_ncs_point[0][0]
     self.y_ncs = numpy_ncs_point[1][0]
-    self.z_ncs = numpy_ncs_point[2][0]
 
   def create_from_xml_attrib_dict(dict):
     dict = convert_dict_values_to_numeric(dict, 'float')

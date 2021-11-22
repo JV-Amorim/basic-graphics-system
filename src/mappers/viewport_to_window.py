@@ -1,21 +1,23 @@
 from models.classes.line import Line
-from models.classes.point_2d import Point2D
+from models.classes.point_3d import Point3D
 from models.classes.polygon import Polygon
 
 
 class ViewportToWindowMapper:
   def __init__(self, window, viewport):
-    self.__window, self.__viewport = window, viewport
+    self.w_min,  self.w_max = window.min_point, window.max_point
+    self.v_min,  self.v_max = viewport.min_point, viewport.max_point
+
+  def window_to_viewport_x(self, x_value):
+    return (x_value / (self.v_max.x - self.v_min.x) * (self.w_max.x - self.w_min.x)) + self.w_min.x
+
+  def window_to_viewport_y(self, y_value):
+    return ((((y_value / (self.v_max.y - self.v_min.y)) - 1) * (self.w_max.y - self.w_min.y)) - self.w_min.y) * (- 1)
 
   def viewport_to_window_point(self, viewport_point):
-    w_min, w_max = self.__window.min_point, self.__window.max_point
-    v_min, v_max = self.__viewport.min_point, self.__viewport.max_point
-
-    window_x = (viewport_point.x / (v_max.x - v_min.x) * (w_max.x - w_min.x)) + w_min.x
-    
-    window_y = ((((viewport_point.y / (v_max.y - v_min.y)) - 1) * (w_max.y - w_min.y)) - w_min.y) * (- 1)
-
-    return Point2D(window_x, window_y)
+    window_x = self.window_to_viewport_x(viewport_point.x)
+    window_y = self.window_to_viewport_y(viewport_point.y)
+    return Point3D(window_x, window_y, 0)
 
   def viewport_to_window_line(self, viewport_line):
     p1 = self.viewport_to_window_point(viewport_line.point_1)

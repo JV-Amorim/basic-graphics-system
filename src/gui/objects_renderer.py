@@ -71,8 +71,10 @@ class ObjectsRenderer(QtWidgets.QWidget):
     painter.setPen(pen)
 
     for line in self.viewportDict['lines']:
-      qtPoint1 = QtCore.QPointF(line.point_1.x, line.point_1.y)
-      qtPoint2 = QtCore.QPointF(line.point_2.x, line.point_2.y)
+      if line.completely_clipped:
+        continue
+      qtPoint1 = QtCore.QPointF(line.point_1.x_clipped, line.point_1.y_clipped)
+      qtPoint2 = QtCore.QPointF(line.point_2.x_clipped, line.point_2.y_clipped)
       qtLine = QtCore.QLineF(qtPoint1, qtPoint2)
       painter.drawLine(qtLine)
       self.drawCoordinatesText(painter, qtPoint1)

@@ -1,4 +1,6 @@
 class Line:
+  completely_clipped = False
+
   def __init__(self, point_1, point_2):
     if point_1 == point_2:
       raise ValueError('The points must be distinct.')

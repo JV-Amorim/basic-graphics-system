@@ -9,8 +9,8 @@ VIEWPORT_FILE_PATH = 'data/output/'
 VIEWPORT_FILE_NAME = 'viewport-coordinates.xml'
 
 
-def get_viewport_data(window_data):
-  mapper = WindowToViewportMapper(window_data['window'], window_data['viewport'])
+def get_viewport_data(window_dict):
+  mapper = WindowToViewportMapper(window_dict['window'], window_dict['viewport'])
 
   viewport_data = {
     'individual_points': [],
@@ -18,15 +18,15 @@ def get_viewport_data(window_data):
     'polygons': []
   }
 
-  for w_point in window_data['individual_points']:
+  for w_point in window_dict['individual_points']:
     v_point = mapper.window_to_viewport_point(w_point)
     viewport_data['individual_points'].append(v_point)
 
-  for w_line in window_data['lines']:
+  for w_line in window_dict['lines']:
     v_line = mapper.window_to_viewport_line(w_line)
     viewport_data['lines'].append(v_line)
 
-  for w_polygon in window_data['polygons']:
+  for w_polygon in window_dict['polygons']:
     v_polygon = mapper.window_to_viewport_polygon(w_polygon)
     viewport_data['polygons'].append(v_polygon)
 
