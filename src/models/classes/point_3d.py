@@ -7,9 +7,7 @@ class Point3D:
   x_ncs = None
   y_ncs = None
   z_ncs = None
-
-  x_clipped = None
-  y_clipped = None
+  completely_clipped = False
 
   def __init__(self, x, y, z):
     is_x_number = isinstance(x, int) or isinstance(x, float)

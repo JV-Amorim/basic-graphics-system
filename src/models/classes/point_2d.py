@@ -6,9 +6,7 @@ from utils.typecast import convert_dict_values_to_numeric
 class Point2D:
   x_ncs = None
   y_ncs = None
-
-  x_clipped = None
-  y_clipped = None
+  completely_clipped = False
 
   def __init__(self, x, y):
     is_x_number = isinstance(x, int) or isinstance(x, float)

@@ -101,31 +101,22 @@ class CohenSutherlandClipper:
 
 
   def generate_result_line(self, result, line, p1, p2):
-    line_point_1, line_point_2 = None, None
-
     if attribute_exists(line.point_1, 'z'):
-      line_point_1 = Point3D(line.point_1.x, line.point_1.y, line.point_1.z)
-      line_point_1.z_ncs = line.point_1.z_ncs
+      line.clipped_point_1 = Point3D(line.point_1.x, line.point_1.y, line.point_1.z)
+      line.clipped_point_1.z_ncs = line.point_1.z_ncs
     else:
-      line_point_1 = Point2D(line.point_1.x, line.point_1.y)
-
-    line_point_1.x_clipped = p1.x_ncs
-    line_point_1.y_clipped = p1.y_ncs
-    line_point_1.x_ncs = line.point_1.x_ncs
-    line_point_1.y_ncs = line.point_1.y_ncs
+      line.clipped_point_1 = Point2D(line.point_1.x, line.point_1.y)
 
     if attribute_exists(line.point_2, 'z'):
-      line_point_2 = Point3D(line.point_2.x, line.point_2.y, line.point_2.z)
-      line_point_2.z_ncs = line.point_2.z_ncs
+      line.clipped_point_2 = Point3D(line.point_2.x, line.point_2.y, line.point_2.z)
+      line.clipped_point_2.z_ncs = line.point_2.z_ncs
     else:
-      line_point_2 = Point2D(line.point_2.x, line.point_2.y)
+      line.clipped_point_2 = Point2D(line.point_2.x, line.point_2.y)
 
-    line_point_2.x_clipped = p2.x_ncs
-    line_point_2.y_clipped = p2.y_ncs
-    line_point_2.x_ncs = line.point_2.x_ncs
-    line_point_2.y_ncs = line.point_2.y_ncs
+    line.clipped_point_1.x_ncs = p1.x_ncs
+    line.clipped_point_1.y_ncs = p1.y_ncs
+    line.clipped_point_2.x_ncs = p2.x_ncs
+    line.clipped_point_2.y_ncs = p2.y_ncs
+    line.completely_clipped = result == ClippingResults.COMPLETELY_OUTSIDE
 
-    result_line = Line(line_point_1, line_point_2)
-    result_line.completely_clipped = result == ClippingResults.COMPLETELY_OUTSIDE
-
-    return result_line
+    return line

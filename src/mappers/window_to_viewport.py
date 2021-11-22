@@ -16,23 +16,22 @@ class WindowToViewportMapper:
 
   def window_to_viewport_point(self, window_point):
     viewport_point = Point2D(0, 0)
-    viewport_point.x_ncs = window_point.x_ncs
-    viewport_point.y_ncs = window_point.y_ncs
 
     viewport_point.x = self.window_to_viewport_x(window_point.x_ncs)
     viewport_point.y = self.window_to_viewport_y(window_point.y_ncs)
-
-    if window_point.x_clipped != None:
-      viewport_point.x_clipped = self.window_to_viewport_x(window_point.x_clipped)
-    if window_point.y_clipped != None:
-      viewport_point.y_clipped =  self.window_to_viewport_y(window_point.y_clipped)
+    
+    viewport_point.x_ncs = window_point.x_ncs
+    viewport_point.y_ncs = window_point.y_ncs
 
     return viewport_point
 
   def window_to_viewport_line(self, window_line):
     p1 = self.window_to_viewport_point(window_line.point_1)
     p2 = self.window_to_viewport_point(window_line.point_2)
-    return Line(p1, p2)
+    viewport_line = Line(p1, p2)
+    viewport_line.clipped_point_1 = self.window_to_viewport_point(window_line.clipped_point_1)
+    viewport_line.clipped_point_2 = self.window_to_viewport_point(window_line.clipped_point_2)
+    return viewport_line
 
   def window_to_viewport_polygon(self, window_polygon):
     points = []

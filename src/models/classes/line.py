@@ -1,4 +1,6 @@
 class Line:
+  clipped_point_1 = None
+  clipped_point_2 = None
   completely_clipped = False
 
   def __init__(self, point_1, point_2):
