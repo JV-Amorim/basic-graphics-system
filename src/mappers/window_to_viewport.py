@@ -20,6 +20,7 @@ class WindowToViewportMapper:
     viewport_point.y = self.window_to_viewport_y(window_point.y_ncs)
     viewport_point.x_ncs = window_point.x_ncs
     viewport_point.y_ncs = window_point.y_ncs
+    viewport_point.completely_clipped = window_point.completely_clipped
     return viewport_point
 
   def window_to_viewport_line(self, window_line):
@@ -28,6 +29,7 @@ class WindowToViewportMapper:
     viewport_line = Line(p1, p2)
     viewport_line.clipped_point_1 = self.window_to_viewport_point(window_line.clipped_point_1)
     viewport_line.clipped_point_2 = self.window_to_viewport_point(window_line.clipped_point_2)
+    viewport_line.completely_clipped = window_line.completely_clipped
     return viewport_line
 
   def window_to_viewport_polygon(self, window_polygon):
