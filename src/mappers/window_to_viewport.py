@@ -1,3 +1,5 @@
+import math
+
 from models.classes.line import Line
 from models.classes.point_2d import Point2D
 from models.classes.polygon import Polygon
@@ -9,10 +11,12 @@ class WindowToViewportMapper:
     self.v_min, self.v_max = viewport.min_point, viewport.max_point
 
   def window_to_viewport_x(self, x_value):
-    return (x_value - self.w_min.x_ncs) / (self.w_max.x_ncs - self.w_min.x_ncs) * (self.v_max.x - self.v_min.x)
+    viewport_x = (x_value - self.w_min.x_ncs) / (self.w_max.x_ncs - self.w_min.x_ncs) * (self.v_max.x - self.v_min.x)
+    return math.floor(viewport_x + 0.5)
   
   def window_to_viewport_y(self, y_value):
-    return  (1 - ((y_value - self.w_min.y_ncs) / (self.w_max.y_ncs - self.w_min.y_ncs))) * (self.v_max.y - self.v_min.y)
+    viewport_y = (1 - ((y_value - self.w_min.y_ncs) / (self.w_max.y_ncs - self.w_min.y_ncs))) * (self.v_max.y - self.v_min.y)
+    return math.floor(viewport_y + 0.5)
 
   def window_to_viewport_point(self, window_point):
     viewport_point = Point2D(0, 0)
