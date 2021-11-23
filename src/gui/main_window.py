@@ -104,24 +104,23 @@ class MainWindow(QtWidgets.QWidget):
   def initGeneralOptionsGroup(self):
     generalOptionsLayout = QtWidgets.QVBoxLayout()
 
-    self.drawCoordinatesCheckbox = QtWidgets.QCheckBox('Draw Coordinates')
-    self.drawCoordinatesCheckbox.click()
-    self.drawCoordinatesCheckbox.clicked.connect(self.refreshObjectsRenderer)
-    generalOptionsLayout.addWidget(self.drawCoordinatesCheckbox)
-
     self.enableClippingCheckbox = QtWidgets.QCheckBox('Enable Clipping')
     self.enableClippingCheckbox.click()
     self.enableClippingCheckbox.clicked.connect(self.refreshObjectsRenderer)
     generalOptionsLayout.addWidget(self.enableClippingCheckbox)
+
+    self.drawCoordinatesCheckbox = QtWidgets.QCheckBox('Show Coordinates')
+    self.drawCoordinatesCheckbox.clicked.connect(self.refreshObjectsRenderer)
+    generalOptionsLayout.addWidget(self.drawCoordinatesCheckbox)
 
     generalOptionsGroup = QtWidgets.QGroupBox('General Options')
     generalOptionsGroup.setLayout(generalOptionsLayout)
     self.sidePanel.addWidget(generalOptionsGroup)
 
   def initObjectsRenderer(self):
-    isDrawCoordinatesEnabled = self.drawCoordinatesCheckbox.isChecked()
     isClippingEnabled = self.enableClippingCheckbox.isChecked()
-    self.objectsRenderer = ObjectsRenderer(self.viewportDict, self.windowDict, isDrawCoordinatesEnabled, isClippingEnabled)
+    isDrawCoordinatesEnabled = self.drawCoordinatesCheckbox.isChecked()
+    self.objectsRenderer = ObjectsRenderer(self.viewportDict, self.windowDict, isClippingEnabled, isDrawCoordinatesEnabled)
     self.mainContainer.addWidget(self.objectsRenderer)
 
   def openObjectInsertionDialog(self):
