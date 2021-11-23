@@ -29,7 +29,7 @@ class ObjectsRenderer(QtWidgets.QWidget):
   def paintEvent(self, event):
     self.drawIndividualPoints()
     self.drawLines()
-    self.drawPolygons()
+    self.drawPolygonsUsingLines()
     self.drawViewportLimits()
 
   def drawViewportLimits(self):
@@ -85,21 +85,34 @@ class ObjectsRenderer(QtWidgets.QWidget):
     painter.setPen(pen)
 
     for line in self.viewportDict['lines']:
-      if self.isClippingEnabled:
-        if line.completely_clipped:
-          continue
-        qtPoint1 = QtCore.QPointF(line.clipped_point_1.x, line.clipped_point_1.y)
-        qtPoint2 = QtCore.QPointF(line.clipped_point_2.x, line.clipped_point_2.y)
-        qtLine = QtCore.QLineF(qtPoint1, qtPoint2)
-      else:
-        qtPoint1 = QtCore.QPointF(line.point_1.x, line.point_1.y)
-        qtPoint2 = QtCore.QPointF(line.point_2.x, line.point_2.y)
-        qtLine = QtCore.QLineF(qtPoint1, qtPoint2)
-      painter.drawLine(qtLine)
-      self.drawCoordinatesText(painter, qtPoint1)
-      self.drawCoordinatesText(painter, qtPoint2)
+      self.drawLine(painter, line)
+  
+  def drawLine(self, painter, line):
+    if self.isClippingEnabled:
+      if line.completely_clipped:
+        return
+      qtPoint1 = QtCore.QPointF(line.clipped_point_1.x, line.clipped_point_1.y)
+      qtPoint2 = QtCore.QPointF(line.clipped_point_2.x, line.clipped_point_2.y)
+      qtLine = QtCore.QLineF(qtPoint1, qtPoint2)
+    else:
+      qtPoint1 = QtCore.QPointF(line.point_1.x, line.point_1.y)
+      qtPoint2 = QtCore.QPointF(line.point_2.x, line.point_2.y)
+      qtLine = QtCore.QLineF(qtPoint1, qtPoint2)
+    
+    painter.drawLine(qtLine)
+    self.drawCoordinatesText(painter, qtPoint1)
+    self.drawCoordinatesText(painter, qtPoint2)
 
-  def drawPolygons(self):
+  def drawPolygonsUsingLines(self):
+    painter = QtGui.QPainter(self)
+    pen = QtGui.QPen(QtGui.Qt.magenta)
+    painter.setPen(pen)
+
+    for polygon in self.viewportDict['polygons']:
+      for line in polygon.lines:
+        self.drawLine(painter, line)
+
+  def drawPolygonsUsingPoints(self):
     painter = QtGui.QPainter(self)
     pen = QtGui.QPen(QtGui.Qt.magenta)
     painter.setPen(pen)

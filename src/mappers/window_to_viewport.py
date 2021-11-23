@@ -40,4 +40,10 @@ class WindowToViewportMapper:
     points = []
     for point in window_polygon.get_points():
       points.append(self.window_to_viewport_point(point))
-    return Polygon(points)
+    polygon = Polygon(points)
+
+    polygon.lines = []
+    for line in window_polygon.lines:
+      polygon.lines.append(self.window_to_viewport_line(line))
+
+    return polygon
