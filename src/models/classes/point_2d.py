@@ -4,10 +4,6 @@ from utils.typecast import convert_dict_values_to_numeric
 
 
 class Point2D:
-  x_ncs = None
-  y_ncs = None
-  completely_clipped = False
-
   def __init__(self, x, y):
     is_x_number = isinstance(x, int) or isinstance(x, float)
     is_y_number = isinstance(y, int) or isinstance(y, float)
@@ -16,6 +12,8 @@ class Point2D:
       raise ValueError('All point coordinates (x, y) must be a number.')
       
     self.x, self.y = x, y
+    self.x_ncs, self.y_ncs = None, None
+    self.completely_clipped = False
 
   def __repr__(self):
     if self.x_ncs != None and self.y_ncs != None:

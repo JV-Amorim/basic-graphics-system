@@ -4,11 +4,6 @@ from utils.typecast import convert_dict_values_to_numeric
 
 
 class Point3D:
-  x_ncs = None
-  y_ncs = None
-  z_ncs = None
-  completely_clipped = False
-
   def __init__(self, x, y, z):
     is_x_number = isinstance(x, int) or isinstance(x, float)
     is_y_number = isinstance(y, int) or isinstance(y, float)
@@ -18,6 +13,8 @@ class Point3D:
       raise ValueError('All point coordinates (x, y, z) must be a number.')
       
     self.x, self.y, self.z = x, y, z
+    self.x_ncs, self.y_ncs, self.z_ncs = None, None, None
+    self.completely_clipped = False
 
   def __repr__(self):
     if self.x_ncs != None and self.y_ncs != None and self.z_ncs != None:

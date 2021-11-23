@@ -5,13 +5,12 @@ from models.enums.window_transformations import WindowTransformations
 
 
 class Window:
-  current_rotation = 0
-
   def __init__(self, min_point_3d, max_point_3d):
     self.min_point = min_point_3d
     self.max_point = max_point_3d
     self.original_min_point = copy.deepcopy(min_point_3d)
     self.original_max_point = copy.deepcopy(max_point_3d)
+    self.current_rotation = 0
 
   def __repr__(self):
     return f'Min Point = {self.min_point} | Max Point = {self.max_point}'
